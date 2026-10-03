@@ -34,5 +34,5 @@ Nie przedstawiać go jako dowodu skrócenia akcji ratunkowej ani poprawy przeży
 
 Drugi członek zespołu przechodzi scenariusz od początku: otwiera sesję, przesyła obserwację,
 otrzymuje zatwierdzoną instrukcję, potwierdza czynność i odczytuje historię w widoku przekazania.
-Jeśli zgłoszenie obejmuje pracę bez internetu — także utrata połączenia, lokalny zapis,
+Jeśli zgłoszenie obejmuje pracę bez internetu - także utrata połączenia, lokalny zapis,
 ponowne otwarcie strony i synchronizacja bez utraty ani duplikacji wpisu.

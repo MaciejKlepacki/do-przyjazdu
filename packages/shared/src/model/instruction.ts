@@ -6,7 +6,7 @@ import type { Author, Timestamp } from './common.js';
  */
 export type InstructionStatus = 'draft' | 'approved' | 'withdrawn';
 
-/** Obiekt „Instrukcja” z sekcji 11. Wersjonowana — potwierdzenie dotyczy konkretnej wersji. */
+/** Obiekt „Instrukcja” z sekcji 11. Wersjonowana - potwierdzenie dotyczy konkretnej wersji. */
 export interface Instruction {
   id: string;
   incidentId: string;

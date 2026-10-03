@@ -25,7 +25,7 @@ import { requireWitness, witnessLinkRoutes, witnessRoutes } from './routes/witne
 
 const WEB_DIST = fileURLToPath(new URL('../../web/dist/', import.meta.url));
 
-/** Zapisy panelu wymagają JSON — formularz z obcej strony nie przejdzie bez preflight CORS. */
+/** Zapisy panelu wymagają JSON - formularz z obcej strony nie przejdzie bez preflight CORS. */
 function requireJsonForWrites(req: Request, res: Response, next: NextFunction) {
   if (req.method === 'GET' || req.method === 'HEAD' || req.is('application/json')) return next();
   res.status(415).json({ error: 'unsupported-media-type', message: 'Wymagany Content-Type: application/json.' });
@@ -38,7 +38,7 @@ export function createApp(db: Db, config: Config) {
   app.set('trust proxy', 1);
   app.use((_req, res, next) => {
     res.setHeader('X-Content-Type-Options', 'nosniff');
-    // Link świadka zawiera token w ścieżce — nie wysyłamy go dalej w nagłówku Referer.
+    // Link świadka zawiera token w ścieżce - nie wysyłamy go dalej w nagłówku Referer.
     res.setHeader('Referrer-Policy', 'no-referrer');
     res.setHeader('X-Frame-Options', 'DENY');
     next();

@@ -11,7 +11,7 @@ export const SCENARIO_AUTHOR_ID = 'scenariusz-roboczy';
 export const DEMO_INCIDENT_DESCRIPTION =
   'Szlak w rejonie Doliny Pięciu Stawów (fikcyjne). Dwie osoby, jedna po upadku na szlaku, druga wezwała pomoc. Pogoda pogarsza się.';
 
-/** Odpowiedź „nie wiem” dokłada interfejs przy każdym polu — nie jest opcją w danych. */
+/** Odpowiedź „nie wiem” dokłada interfejs przy każdym polu - nie jest opcją w danych. */
 export const SCENARIO_FIELDS: Array<Omit<ObservationField, 'allowsUnknown'>> = [
   {
     key: 'responds',
@@ -110,7 +110,7 @@ export interface ScenarioInstruction {
 
 export const DEMO_PACKAGE_ID = 'PAKIET-01';
 
-/** Instrukcje trafiają do bazy jako szkice — świadek zobaczy je dopiero po zatwierdzeniu (sekcja 8). */
+/** Instrukcje trafiają do bazy jako szkice - świadek zobaczy je dopiero po zatwierdzeniu (sekcja 8). */
 export const SCENARIO_INSTRUCTIONS: ScenarioInstruction[] = [
   {
     text: 'Zostań przy poszkodowanym. Nie przemieszczaj go, chyba że w miejscu, w którym jesteście, grozi wam niebezpieczeństwo.',

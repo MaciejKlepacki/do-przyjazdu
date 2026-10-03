@@ -41,7 +41,7 @@ export function AiDraftPanel({ incidentId, draft, available, canApprove, onChang
   return (
     <div className="stack">
       <p className="hint">
-        <strong>Szkic przygotowany przez AI — nie jest wpisem w historii.</strong> Każde zdanie ma odnośniki do wpisów; zdania bez odnośnika lub z treścią
+        <strong>Szkic przygotowany przez AI - nie jest wpisem w historii.</strong> Każde zdanie ma odnośniki do wpisów; zdania bez odnośnika lub z treścią
         diagnostyczną są odrzucane. Sprawdź z osią czasu.
       </p>
       {busy && (

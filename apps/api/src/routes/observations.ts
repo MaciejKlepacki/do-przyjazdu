@@ -1,5 +1,5 @@
 // GET  /incidents/:id/observations   dla panelu, z informacją o brakach i źródle
-// POST /incidents/:id/observations   ocena prowadzącego — osobne źródło niż obserwacja świadka (sekcja 8)
+// POST /incidents/:id/observations   ocena prowadzącego - osobne źródło niż obserwacja świadka (sekcja 8)
 // POST /witness/observations         wpis z telefonu; idempotentny po entry_id
 import { Router } from 'express';
 import { z } from 'zod';
@@ -10,7 +10,7 @@ import { loadFields, loadObservations } from '../services/records.js';
 import { acceptEnvelope } from '../services/witnessEntries.js';
 import { authorize, h, param, staffId, type Ctx } from './context.js';
 
-/** Pojedynczy wpis świadka — ta sama ścieżka co /witness/sync. */
+/** Pojedynczy wpis świadka - ta sama ścieżka co /witness/sync. */
 export function singleWitnessEntry(ctx: Ctx, kind: string) {
   return h((req, res) => {
     const actor = req.actor;

@@ -1,5 +1,3 @@
-// Wspólne klocki interfejsu: logo, arkusz, powiadomienia w stylu Dynamic Island,
-// pierścień postępu, awatar, puste stany. Animacje respektują prefers-reduced-motion.
 import { AnimatePresence, motion, useDragControls } from 'framer-motion';
 import { X } from 'lucide-react';
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
@@ -8,7 +6,6 @@ import { createPortal } from 'react-dom';
 export const spring = { type: 'spring', stiffness: 420, damping: 36 } as const;
 export const softSpring = { type: 'spring', stiffness: 240, damping: 26 } as const;
 
-/** Krótka wibracja (Android). iOS Safari ignoruje — bez skutków ubocznych. */
 export function haptic(pattern: number | number[] = 10) {
   try {
     navigator.vibrate?.(pattern);
@@ -17,7 +14,6 @@ export function haptic(pattern: number | number[] = 10) {
   }
 }
 
-/** Zachowuje ostatnią niepustą wartość — treść arkusza nie znika w trakcie animacji zamykania. */
 export function useRetained<T>(value: T | null | undefined): T | null | undefined {
   const ref = useRef(value);
   if (value !== null && value !== undefined) ref.current = value;
@@ -31,30 +27,16 @@ export function plural(n: number, one: string, few: string, many: string): strin
   return d >= 2 && d <= 4 && (t < 12 || t > 14) ? few : many;
 }
 
-// ---------------------------------------------------------------- Logo
-
 export function Logo({ size = 32 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 64 64" aria-hidden className="logo">
-      <defs>
-        <linearGradient id="lg-bg" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#ff6a55" />
-          <stop offset="1" stopColor="#e8261c" />
-        </linearGradient>
-        <linearGradient id="lg-m" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#ffffff" />
-          <stop offset="1" stopColor="#ffe3de" />
-        </linearGradient>
-      </defs>
-      <rect width="64" height="64" rx="15" fill="url(#lg-bg)" />
-      <path d="M8 48 L24 25 L31 34 L40 19 L56 48 Z" fill="url(#lg-m)" />
-      <path d="M40 19 L35.5 26.6 L38.2 25.2 L40 27.4 L42.2 25.4 L44.4 26.4 Z" fill="#e8261c" opacity="0.28" />
-      <path d="M29 12h6M32 9v6" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" />
+      <rect width="64" height="64" rx="12" fill="#192e28" />
+      <path d="M16 40h9c10 0 4-16 15-16h8" stroke="#fffef8" strokeWidth="5" strokeLinecap="round" fill="none" />
+      <circle cx="16" cy="40" r="5" fill="#ed8756" />
+      <circle cx="48" cy="24" r="5" fill="#fffef8" />
     </svg>
   );
 }
-
-// ---------------------------------------------------------------- Drobne elementy
 
 export function LiveDot({ tone = 'green', pulse = true }: { tone?: 'green' | 'red' | 'orange' | 'blue' | 'gray'; pulse?: boolean }) {
   return <span className={`live-dot is-${tone}${pulse ? ' pulse' : ''}`} aria-hidden />;
@@ -86,13 +68,7 @@ export function ProgressRing({ value, size = 44, stroke = 5, label }: { value: n
   );
 }
 
-const AVATAR_GRADIENTS = [
-  ['#5e5ce6', '#bf5af2'],
-  ['#0a84ff', '#5ac8fa'],
-  ['#ff9f0a', '#ff375f'],
-  ['#30d158', '#30b0c7'],
-  ['#ff453a', '#ff9f0a'],
-];
+const AVATAR_COLORS = ['#224d3e', '#48665d', '#755540', '#456347', '#5b6750'];
 
 export function Avatar({ name, size = 34 }: { name: string; size?: number }) {
   const initials = name
@@ -103,9 +79,9 @@ export function Avatar({ name, size = 34 }: { name: string; size?: number }) {
     .map((p) => p[0]!.toUpperCase())
     .join('');
   const hash = [...name].reduce((h, ch) => (h * 31 + ch.charCodeAt(0)) >>> 0, 7);
-  const [a, b] = AVATAR_GRADIENTS[hash % AVATAR_GRADIENTS.length]!;
+  const color = AVATAR_COLORS[hash % AVATAR_COLORS.length]!;
   return (
-    <span className="avatar" style={{ width: size, height: size, fontSize: size * 0.38, background: `linear-gradient(135deg, ${a}, ${b})` }}>
+    <span className="avatar" style={{ width: size, height: size, fontSize: size * 0.38, background: color }}>
       {initials}
     </span>
   );
@@ -134,7 +110,6 @@ export function EmptyState({ icon, title, children }: { icon: ReactNode; title: 
   );
 }
 
-/** Animowany „ptaszek” — rysuje się po pojawieniu. */
 export function DrawCheck({ size = 44, color = '#fff', delay = 0.08 }: { size?: number; color?: string; delay?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -169,8 +144,6 @@ export function Splash({ icon, tone, title, children }: { icon?: ReactNode; tone
     </div>
   );
 }
-
-// ---------------------------------------------------------------- Arkusz
 
 interface SheetProps {
   open: boolean;
@@ -234,8 +207,6 @@ export function Sheet({ open, onClose, title, label, children }: SheetProps) {
     document.body,
   );
 }
-
-// ---------------------------------------------------------------- Powiadomienia (Dynamic Island)
 
 export type ToastTone = 'ok' | 'warn' | 'bad' | 'info';
 interface ToastMsg {

@@ -22,7 +22,7 @@ export function SmsSimulator({ onSent, hint }: { onSent: () => void; hint?: stri
             onClick={async () => {
               try {
                 const sms = await api<{ needsManualReview: boolean }>('/sms/simulate', { method: 'POST', body: { text } });
-                setMsg(sms.needsManualReview ? 'Odebrano — nie rozpoznano zdarzenia, trafia do ręcznej weryfikacji.' : 'Odebrano i przypisano do zdarzenia.');
+                setMsg(sms.needsManualReview ? 'Odebrano - nie rozpoznano zdarzenia, trafia do ręcznej weryfikacji.' : 'Odebrano i przypisano do zdarzenia.');
                 setText('');
                 onSent();
               } catch (err) {

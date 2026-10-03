@@ -108,7 +108,7 @@ export function withdrawInstruction(db: Db, incidentId: string, id: string): num
   );
 }
 
-/** Czy świadek mógł zobaczyć tę wersję — tylko wtedy przyjmujemy odpowiedź (sekcja 8). */
+/** Czy świadek mógł zobaczyć tę wersję - tylko wtedy przyjmujemy odpowiedź (sekcja 8). */
 export function wasShownToWitness(db: Db, incidentId: string, id: string, version: number): boolean {
   return Boolean(
     get(db, 'SELECT 1 AS ok FROM instructions WHERE id = $id AND version = $version AND incident_id = $incidentId AND approved_at IS NOT NULL', {

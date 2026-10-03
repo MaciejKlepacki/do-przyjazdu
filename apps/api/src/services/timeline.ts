@@ -22,7 +22,7 @@ export function buildTimeline(db: Db, incidentId: string, gapThresholdSeconds: n
   for (const i of loadInstructions(db, incidentId)) {
     if (i.approvedAt) events.push({ id: `${i.id}@v${i.version}`, type: 'instruction-approved', at: i.approvedAt, data: i });
     if (i.withdrawnAt && i.approvedAt) {
-      // Jedno wycofanie obejmuje wszystkie wersje — pokazujemy je raz, z najwyższą wersją.
+      // Jedno wycofanie obejmuje wszystkie wersje - pokazujemy je raz, z najwyższą wersją.
       withdrawals.set(`${i.id}|${i.withdrawnAt}`, {
         id: `${i.id}@withdrawn@${i.withdrawnAt}`,
         type: 'instruction-withdrawn',

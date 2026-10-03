@@ -14,7 +14,7 @@ interface Props {
   highlight?: ReadonlySet<string>;
 }
 
-/** Opóźnienie odbioru względem czasu telefonu — sygnał, że wpis czekał w kolejce. */
+/** Opóźnienie odbioru względem czasu telefonu - sygnał, że wpis czekał w kolejce. */
 function DelayNote({ deviceTime, receivedTime }: { deviceTime: string; receivedTime: string | null }) {
   if (!receivedTime) return null;
   const delay = (Date.parse(receivedTime) - Date.parse(deviceTime)) / 1000;
@@ -186,7 +186,7 @@ export function Timeline({ events, fields, instructions, staff, highlight }: Pro
       case 'contact-gap':
         return (
           <div className="tl-title">
-            {e.data.ongoing ? 'Trwa brak kontaktu z telefonem świadka' : 'Brak kontaktu z telefonem świadka'} — {formatDuration(e.data.from, e.data.to)}
+            {e.data.ongoing ? 'Trwa brak kontaktu z telefonem świadka' : 'Brak kontaktu z telefonem świadka'} - {formatDuration(e.data.from, e.data.to)}
             {e.data.to && <span className="muted"> (do {formatTime(e.data.to)})</span>}
           </div>
         );

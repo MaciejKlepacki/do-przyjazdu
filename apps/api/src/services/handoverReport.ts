@@ -1,6 +1,6 @@
 // Budowa HandoverReport z uporządkowanych danych: ostatnie obserwacje, zatwierdzone
 // instrukcje i rezultaty, wyposażenie, nierozwiązane trudności, braki, przerwy w kontakcie.
-// Nie wywołuje AI — niedostępne AI nie może blokować przekazania.
+// Nie wywołuje AI - niedostępne AI nie może blokować przekazania.
 import type { HandoverReport } from '@do-przyjazdu/shared';
 import type { Db } from '../db/client.js';
 import { nowIso } from '../lib/ids.js';

@@ -1,4 +1,4 @@
-// Przyjmowanie wpisów z telefonu świadka (reguły 1–5 z sekcji 10).
+// Przyjmowanie wpisów z telefonu świadka (reguły 1-5 z sekcji 10).
 // Każdy wpis ma dwa czasy: urządzenia (niepewny) i odbioru przez serwer.
 import type { SyncResultItem, WitnessEnvelope } from '@do-przyjazdu/shared';
 import { z } from 'zod';

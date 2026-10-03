@@ -13,7 +13,7 @@ function lastWitnessContact(db: Db, incidentId: string): string | null {
 
 /**
  * Zapis kontaktu z telefonem świadka. Jeśli od poprzedniego minęło więcej niż próg,
- * zapisujemy zakończoną przerwę — będzie widoczna w panelu i przy przekazaniu.
+ * zapisujemy zakończoną przerwę - będzie widoczna w panelu i przy przekazaniu.
  */
 export function touchWitness(db: Db, accessId: string, incidentId: string, thresholdSeconds: number): void {
   const now = nowIso();

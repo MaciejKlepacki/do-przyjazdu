@@ -1,4 +1,3 @@
-// Wspólna rama panelu i widoku przekazania: szklany pasek z logo, zegarem i kontem.
 import { LogOut } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
@@ -25,13 +24,14 @@ export function StaffShell({ crumbs, demo, children }: { crumbs?: ReactNode; dem
       <DemoBanner visible={me.demoMode || Boolean(demo)} />
       <header className="nav">
         <div className="nav-inner">
-          <Link to="/dispatcher" className="brand">
+          <Link to="/dispatcher" className="brand" aria-label="Do przyjazdu, panel zespołu">
             <Logo size={30} />
             <span className="brand-name">Do przyjazdu</span>
             <span className="brand-sub">Centrum</span>
           </Link>
           {crumbs && <nav className="crumbs" aria-label="Ścieżka">{crumbs}</nav>}
           <div className="nav-right">
+            {me.demoMode && me.user.role === 'dispatcher' && <Link to="/demo" className="btn btn-sm btn-outline">Pokaż demo</Link>}
             <Clock />
             <div className="user-chip">
               <Avatar name={me.user.displayName} size={30} />

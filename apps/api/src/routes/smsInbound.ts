@@ -49,7 +49,7 @@ export function smsRoutes(ctx: Ctx): Router {
   const r = Router();
   const staff = requireStaff(ctx.db, ctx.config);
 
-  // Prawdziwy odbiornik — tylko z ustawionym sekretem.
+  // Prawdziwy odbiornik - tylko z ustawionym sekretem.
   r.post(
     '/sms/inbound',
     h((req, res) => {
@@ -59,7 +59,7 @@ export function smsRoutes(ctx: Ctx): Router {
     }),
   );
 
-  // Symulacja odbioru w demo — wpisy oznaczone jako symulowane.
+  // Symulacja odbioru w demo - wpisy oznaczone jako symulowane.
   r.post(
     '/sms/simulate',
     staff,
@@ -95,7 +95,7 @@ export function smsRoutes(ctx: Ctx): Router {
     }),
   );
 
-  // Odbiór to nie to samo co przeczytanie — prowadzący potwierdza osobno (sekcja 10).
+  // Odbiór to nie to samo co przeczytanie - prowadzący potwierdza osobno (sekcja 10).
   r.post(
     '/sms/:id/read',
     staff,

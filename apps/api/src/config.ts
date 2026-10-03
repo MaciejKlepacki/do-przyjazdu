@@ -49,7 +49,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     throw new Error('DISPATCHER_PASSWORD i SESSION_SECRET mają wartości domyślne. Ustaw własne przed uruchomieniem produkcyjnym.');
   }
   if (weak && config.NODE_ENV === 'development') {
-    console.warn('[config] Uwaga: domyślne DISPATCHER_PASSWORD / SESSION_SECRET — tylko do lokalnych prób.');
+    console.warn('[config] Uwaga: domyślne DISPATCHER_PASSWORD / SESSION_SECRET - tylko do lokalnych prób.');
   }
   return config;
 }

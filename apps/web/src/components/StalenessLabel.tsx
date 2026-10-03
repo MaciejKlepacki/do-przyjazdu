@@ -24,7 +24,7 @@ export function StalenessLabel({ prefix, at, staleAfterSeconds = 120, never = 'b
   );
 }
 
-/** Sam wiek informacji — do kafelków. Zwraca też, czy jest stara. */
+/** Sam wiek informacji - do kafelków. Zwraca też, czy jest stara. */
 export function useAge(at: string | null | undefined, staleAfterSeconds: number) {
   const now = useNow(5000);
   const age = ageSeconds(at, now);

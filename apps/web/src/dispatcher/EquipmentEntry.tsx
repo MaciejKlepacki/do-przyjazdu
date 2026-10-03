@@ -1,5 +1,5 @@
 // Wpis wyposażenia i dostawy pakietu (np. dronem) z identyfikatorem pakietu.
-// Prototyp nie komunikuje się z dronem — dostawę wpisuje dyspozytor (sekcja 12).
+// Prototyp nie komunikuje się z dronem - dostawę wpisuje dyspozytor (sekcja 12).
 import type { EquipmentItem, StaffUser } from '@do-przyjazdu/shared';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Package, Plus } from 'lucide-react';

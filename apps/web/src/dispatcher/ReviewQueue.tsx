@@ -68,7 +68,7 @@ export function ReviewQueue({ reports, sms, canManage, onChange }: Props) {
                   SMS {s.isSimulated && <span className="badge">symulacja</span>}
                 </div>
                 <pre className="sms-raw">{s.rawText}</pre>
-                <div className="xsmall subtle">odebrano {formatTime(s.receivedTime)} — odbiór nie oznacza przeczytania</div>
+                <div className="xsmall subtle">odebrano {formatTime(s.receivedTime)} - odbiór nie oznacza przeczytania</div>
               </div>
               {canManage && (
                 <button className="btn btn-sm btn-dark" onClick={() => call(`/sms/${s.id}/read`)}>

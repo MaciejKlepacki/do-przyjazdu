@@ -1,5 +1,3 @@
-// Łatwo dostępne zgłoszenie zmiany sytuacji.
-// Po zapisie rozróżnienie: „zapisano na urządzeniu” vs „otrzymano w centrali”.
 import { motion } from 'framer-motion';
 import { CloudLightning, MessageSquare, ShieldAlert, Snowflake, UserRoundX, Wind } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
@@ -26,15 +24,25 @@ export function ReportChangeButton({ onReport, findEntry, onSms, offline }: Prop
   const [open, setOpen] = useState(false);
   const [text, setText] = useState('');
   const [savedId, setSavedId] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const saved = savedId ? findEntry(savedId) : undefined;
   const delivered = saved?.status === 'received-by-server';
 
   const submit = async (value: string) => {
-    if (!value.trim()) return;
+    if (!value.trim() || busy) return;
+    setBusy(true);
+    setError(null);
     haptic([20, 40, 20]);
-    const entry = await onReport(value.trim());
-    setSavedId(entry.entryId);
-    setText('');
+    try {
+      const entry = await onReport(value.trim());
+      setSavedId(entry.entryId);
+      setText('');
+    } catch {
+      setError('Nie udało się zapisać zgłoszenia na telefonie. Spróbuj ponownie.');
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
@@ -47,6 +55,7 @@ export function ReportChangeButton({ onReport, findEntry, onSms, offline }: Prop
             haptic(12);
             setOpen(true);
             setSavedId(null);
+            setError(null);
           }}
         >
           <LiveDot tone="red" /> Zgłoś zmianę sytuacji
@@ -64,7 +73,7 @@ export function ReportChangeButton({ onReport, findEntry, onSms, offline }: Prop
             </div>
             {!delivered && (
               <p className="hint" style={{ textAlign: 'center' }}>
-                Centrala jeszcze go nie otrzymała. Jeśli możesz dzwonić — powiedz o zmianie prowadzącemu.
+                Centrala jeszcze go nie otrzymała. Jeśli możesz dzwonić - powiedz o zmianie prowadzącemu.
               </p>
             )}
             {offline && !delivered && (
@@ -82,6 +91,7 @@ export function ReportChangeButton({ onReport, findEntry, onSms, offline }: Prop
               {QUICK.map((q, i) => (
                 <motion.button
                   key={q.text}
+                  disabled={busy}
                   className="quick-tile"
                   whileTap={{ scale: 0.96 }}
                   initial={{ opacity: 0, y: 12 }}
@@ -98,7 +108,8 @@ export function ReportChangeButton({ onReport, findEntry, onSms, offline }: Prop
               <span>Albo opisz krótko</span>
               <textarea rows={3} maxLength={500} value={text} onChange={(e) => setText(e.target.value)} placeholder="Co się zmieniło?" />
             </label>
-            <button className="btn btn-lg btn-dark btn-block" disabled={!text.trim()} onClick={() => submit(text)}>
+            {error && <p className="error-text" role="alert">{error}</p>}
+            <button className="btn btn-lg btn-dark btn-block" disabled={!text.trim() || busy} onClick={() => submit(text)}>
               Zapisz zgłoszenie
             </button>
           </>

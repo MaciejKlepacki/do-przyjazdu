@@ -58,7 +58,7 @@ export const SMS_STATUS_LABEL: Record<SmsFallbackStatus, string> = {
 export function answerText(field: ObservationField | undefined, value: MaybeKnown<string | number | string[]>): string {
   if (!value.known) return value.reason === 'unknown' ? 'nie wiem' : 'nie zapytano';
   const label = (v: string) => field?.options?.find((o) => o.value === v)?.label ?? v;
-  if (Array.isArray(value.value)) return value.value.map(label).join(', ') || '—';
+  if (Array.isArray(value.value)) return value.value.map(label).join(', ') || '-';
   return typeof value.value === 'number' ? `${value.value}${field?.unit ? ' ' + field.unit : ''}` : label(value.value);
 }
 

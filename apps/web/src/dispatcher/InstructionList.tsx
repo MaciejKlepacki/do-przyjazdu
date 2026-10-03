@@ -84,7 +84,7 @@ export function InstructionList({ incidentId, instructions, outcomes, acknowledg
                   </span>
                 ) : (
                   <span className="badge badge-orange">
-                    <EyeOff size={12} /> szkic — świadek nie widzi
+                    <EyeOff size={12} /> szkic - świadek nie widzi
                   </span>
                 )}
                 {g.latest.packageId && (
@@ -102,7 +102,7 @@ export function InstructionList({ incidentId, instructions, outcomes, acknowledg
               <p className="ins-text">{(g.live ?? g.latest).text}</p>
               {g.live && (
                 <p className="ins-meta">
-                  v{g.live.version} zatwierdził {g.live.approvedBy?.kind === 'dispatcher' ? name(g.live.approvedBy.userId) : '—'} o {formatTime(g.live.approvedAt)} · autor:{' '}
+                  v{g.live.version} zatwierdził {g.live.approvedBy?.kind === 'dispatcher' ? name(g.live.approvedBy.userId) : '-'} o {formatTime(g.live.approvedAt)} · autor:{' '}
                   {name(g.live.authorId)}
                 </p>
               )}
