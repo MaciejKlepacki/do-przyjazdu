@@ -1,4 +1,4 @@
-// Generuje ikony PWA (bez zależności): granatowe tło, biały krzyż, pomarańczowy pasek.
+// Generuje ikony PWA (bez zależności): znak „Do przyjazdu” — czerwony gradient, białe szczyty.
 // Uruchomienie: node scripts/generate-icons.mjs
 import { writeFileSync } from 'node:fs';
 import { deflateSync } from 'node:zlib';
@@ -36,20 +36,37 @@ function png(size, pixel) {
   return Buffer.concat([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), chunk('IHDR', ihdr), chunk('IDAT', deflateSync(raw)), chunk('IEND', Buffer.alloc(0))]);
 }
 
-const NAVY = [11, 26, 43, 255];
-const WHITE = [255, 255, 255, 255];
-const ORANGE = [255, 176, 32, 255];
+// Ten sam znak co logo w aplikacji: czerwony gradient, białe szczyty, krzyżyk nad szczytem.
+// Współrzędne w siatce 64×64 (jak SVG w components/ui.tsx), wygładzanie 4×4 próbki na piksel.
+const MOUNTAIN = [[8, 48], [24, 25], [31, 34], [40, 19], [56, 48]];
+const inPoly = (x, y, poly) => {
+  let inside = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const [xi, yi] = poly[i];
+    const [xj, yj] = poly[j];
+    if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) inside = !inside;
+  }
+  return inside;
+};
+const inCross = (x, y) => (Math.abs(y - 12) < 1.3 && Math.abs(x - 32) < 4.3) || (Math.abs(x - 32) < 1.3 && Math.abs(y - 12) < 4.3);
 
 function icon(scale) {
   // scale < 1 zostawia margines bezpieczny dla ikon maskable.
   return (u, v) => {
-    const x = (u - 0.5) / scale + 0.5;
-    const y = (v - 0.5) / scale + 0.5;
-    const arm = 0.13;
-    const inCross = (Math.abs(x - 0.5) < arm && y > 0.18 && y < 0.72) || (Math.abs(y - 0.45) < arm && x > 0.23 && x < 0.77);
-    if (inCross) return WHITE;
-    if (y > 0.8 && y < 0.86 && x > 0.2 && x < 0.8) return ORANGE;
-    return NAVY;
+    const top = [255, 106, 85];
+    const bottom = [232, 38, 28];
+    const bg = top.map((c, i) => Math.round(c + (bottom[i] - c) * v));
+    let white = 0;
+    const N = 4;
+    for (let sy = 0; sy < N; sy++) {
+      for (let sx = 0; sx < N; sx++) {
+        const x = ((u + sx / (N * 640) - 0.5) / scale + 0.5) * 64;
+        const y = ((v + sy / (N * 640) - 0.5) / scale + 0.5) * 64;
+        if (inPoly(x, y, MOUNTAIN) || inCross(x, y)) white++;
+      }
+    }
+    const a = white / (N * N);
+    return [...bg.map((c) => Math.round(c + (255 - c) * a)), 255];
   };
 }
 

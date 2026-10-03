@@ -4,12 +4,15 @@
 // Statusy: przygotowano / otwarto aplikację SMS / wysłano z telefonu /
 // odebrano przez centralę / przeczytano przez prowadzącego.
 // UI nie może twierdzić, że wiadomość dotarła, dopóki centrala tego nie potwierdzi.
-import { formatSmsBody, SMS_TEXT_MAX, type WitnessSessionResponse } from '@do-przyjazdu/shared';
+import { formatSmsBody, SMS_TEXT_MAX, type SmsFallbackStatus, type WitnessSessionResponse } from '@do-przyjazdu/shared';
+import { Check, FlaskConical, MapPin, MessageSquare, X } from 'lucide-react';
 import { useState } from 'react';
 import { ACK_LABEL, SMS_STATUS_LABEL } from '../lib/labels';
 import type { LocalEntry } from '../offline/db';
 import { setSmsStatus } from '../offline/queue';
 import { smsStatusFor } from './entryStatus';
+
+const STEPS: SmsFallbackStatus[] = ['prepared', 'sms-app-opened', 'declared-sent', 'received-by-center', 'read-by-lead'];
 
 function defaultText(entry: LocalEntry, session: WitnessSessionResponse): string {
   if (entry.kind === 'situation-change') return `ZMIANA: ${entry.payload.text}`;
@@ -23,11 +26,11 @@ function defaultText(entry: LocalEntry, session: WitnessSessionResponse): string
 interface Props {
   entry: LocalEntry;
   session: WitnessSessionResponse;
-  onClose: () => void;
   onChanged: () => void;
 }
 
-export function SmsFallback({ entry, session, onClose, onChanged }: Props) {
+/** Zawartość arkusza „Aktualizacja SMS-em”. */
+export function SmsFallback({ entry, session, onChanged }: Props) {
   const [text, setText] = useState(() => entry.sms?.text || defaultText(entry, session));
   const [coords, setCoords] = useState<{ lat: number; lon: number } | null>(null);
   const [geoMsg, setGeoMsg] = useState<string | null>(null);
@@ -35,6 +38,7 @@ export function SmsFallback({ entry, session, onClose, onChanged }: Props) {
   const body = formatSmsBody({ incidentId: session.incident.id, entryId: entry.entryId, text, coords });
   const number = session.sms.number ?? '';
   const href = `sms:${number}${/iPhone|iPad/.test(navigator.userAgent) ? '&' : '?'}body=${encodeURIComponent(body)}`;
+  const reached = status ? STEPS.indexOf(status) : -1;
 
   const mark = async (s: 'prepared' | 'sms-app-opened' | 'declared-sent') => {
     await setSmsStatus(entry, s, text);
@@ -55,51 +59,66 @@ export function SmsFallback({ entry, session, onClose, onChanged }: Props) {
   };
 
   return (
-    <div className="sheet" role="dialog" aria-modal="true" aria-label="Wyślij SMS">
-      <div className="sheet-body">
-        <h2>Aktualizacja SMS-em</h2>
-        <p className="small">
-          Telefon otworzy aplikację Wiadomości z gotowym tekstem. <strong>Wysyłasz sam.</strong> SMS to zwykła wiadomość — może dotrzeć z
-          opóźnieniem albo wcale. Nie wpisuj nazwisk.
-        </p>
-        {session.sms.simulated && (
-          <div className="notice notice-warn small">
+    <>
+      <p className="hint">
+        Telefon otworzy aplikację Wiadomości z gotowym tekstem. <strong>Wysyłasz sam.</strong> SMS to zwykła wiadomość — może dotrzeć z opóźnieniem albo
+        wcale. Nie wpisuj nazwisk.
+      </p>
+      {session.sms.simulated && (
+        <div className="callout callout-orange small">
+          <FlaskConical size={17} />
+          <span>
             Demo: odbiór SMS w centrali jest <strong>symulowany</strong>
             {number ? '' : ' i numer odbiorczy nie jest ustawiony'}. Prowadzący wkleja treść w panelu.
-          </div>
-        )}
-        <label className="field-label">
-          Treść (max {SMS_TEXT_MAX} znaków)
-          <textarea rows={3} maxLength={SMS_TEXT_MAX} value={text} onChange={(e) => setText(e.target.value)} />
-        </label>
-        <div className="row">
-          <button className="btn btn-secondary" onClick={addLocation}>
-            {coords ? 'Odśwież położenie' : 'Dodaj współrzędne'}
-          </button>
-          {coords && (
-            <button className="btn" onClick={() => setCoords(null)}>
-              Usuń współrzędne
-            </button>
-          )}
+          </span>
         </div>
-        {geoMsg && <p className="small muted">{geoMsg}</p>}
-        <pre className="sms-preview">{body}</pre>
-        <a className="btn btn-primary btn-large" href={href} onClick={() => void mark('sms-app-opened')}>
-          Otwórz aplikację SMS
-        </a>
-        {(status === 'sms-app-opened' || status === 'prepared') && (
-          <button className="btn" onClick={() => void mark('declared-sent')}>
-            Wysłałem SMS
+      )}
+      <div>
+        <div className="bubble-wrap">
+          <div className="bubble">{body}</div>
+        </div>
+        <div className="bubble-meta">Podgląd wiadomości · {body.length} znaków</div>
+      </div>
+      <label className="field">
+        <span>
+          Treść (max {SMS_TEXT_MAX} znaków)
+        </span>
+        <textarea rows={2} maxLength={SMS_TEXT_MAX} value={text} onChange={(e) => setText(e.target.value)} />
+      </label>
+      <div className="row">
+        <button className="btn btn-sm btn-tint-blue" onClick={addLocation}>
+          <MapPin size={15} /> {coords ? 'Odśwież położenie' : 'Dodaj współrzędne'}
+        </button>
+        {coords && (
+          <button className="btn btn-sm" onClick={() => setCoords(null)}>
+            <X size={15} /> Usuń współrzędne
           </button>
         )}
-        <p className="small">
-          Status: <strong>{status ? SMS_STATUS_LABEL[status] : 'nie przygotowano'}</strong>
-          {status === 'declared-sent' && ' — centrala jeszcze nie potwierdziła odbioru.'}
-        </p>
-        <button className="btn" onClick={onClose}>
-          Zamknij
-        </button>
       </div>
-    </div>
+      {geoMsg && <p className="hint">{geoMsg}</p>}
+      <a className="btn btn-xl btn-success btn-block" href={href} onClick={() => void mark('sms-app-opened')}>
+        <MessageSquare size={21} /> Otwórz aplikację SMS
+      </a>
+      {(status === 'sms-app-opened' || status === 'prepared') && (
+        <button className="btn btn-lg btn-block" onClick={() => void mark('declared-sent')}>
+          <Check size={18} /> Wysłałem SMS
+        </button>
+      )}
+      <div>
+        <h3 className="section-label">Status</h3>
+        <ol className="stepper">
+          {STEPS.map((s, i) => (
+            <li key={s} className={i < reached ? 'is-done' : i === reached ? 'is-done is-current' : ''}>
+              <span className="stepper-dot">
+                <Check size={12} strokeWidth={3} />
+              </span>
+              {SMS_STATUS_LABEL[s]}
+              {i >= 3 && <span className="stepper-note subtle">potwierdza centrala</span>}
+            </li>
+          ))}
+        </ol>
+        {status === 'declared-sent' && <p className="hint" style={{ marginTop: '0.4rem' }}>Centrala jeszcze nie potwierdziła odbioru.</p>}
+      </div>
+    </>
   );
 }
