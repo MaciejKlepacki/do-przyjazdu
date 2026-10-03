@@ -59,7 +59,7 @@ export interface WitnessLinkInfo {
 }
 
 export interface WitnessLinkCreated extends WitnessLinkInfo {
-  /** Token pokazywany tylko raz — w bazie zostaje skrót. */
+  /** Token pokazywany tylko raz - w bazie zostaje skrót. */
   token: string;
   path: string;
 }
@@ -83,7 +83,7 @@ export interface IncidentPanelResponse {
   fieldStates: FieldState[];
   missingInformation: MissingInformationItem[];
   observations: Observation[];
-  /** Wszystkie wersje — nic nie jest nadpisywane. */
+  /** Wszystkie wersje - nic nie jest nadpisywane. */
   instructions: Instruction[];
   instructionOutcomes: InstructionOutcome[];
   acknowledgements: Acknowledgement[];

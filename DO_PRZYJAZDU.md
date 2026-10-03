@@ -244,7 +244,7 @@ Unieważnienie linku nie usuwa automatycznie danych z urządzenia pozostającego
 Wybór technologii jest propozycją dla zespołu. W katalogu znajdują się materiały researchowe; dokument nie zakłada istniejącej aplikacji.
 
 ```text
-Telefon świadka — aplikacja webowa / PWA
+Telefon świadka - aplikacja webowa / PWA
   ├─ pobrane instrukcje i lokalna historia
   ├─ API przez HTTPS ───────────────────────► Backend
   └─ aplikacja SMS, uruchomiona przez świadka
@@ -325,12 +325,12 @@ W demo dostawa pakietu jest zdarzeniem wpisanym przez dyspozytora. Można pokaza
 
 | Czas | Pokaz | Co udowadniamy |
 |---|---|---|
-| 0:00–0:20 | Krótkie przedstawienie sytuacji oczekiwania na pomoc | Konkretny użytkownik i moment użycia |
-| 0:20–0:50 | Otwarcie sesji i zapis obserwacji | Ten sam wpis pojawia się w centrali |
-| 0:50–1:20 | Zatwierdzenie instrukcji i potwierdzenie wykonania | Prowadzący widzi rezultat polecenia |
-| 1:20–1:40 | Dodanie dostawy pakietu i kolejnej instrukcji | Wyposażenie jest powiązane z działaniem |
-| 1:40–2:20 | Utrata internetu, lokalny wpis i odzyskanie połączenia | Rozróżnienie zapisu lokalnego od odbioru w centrali |
-| 2:20–3:00 | Widok przekazania | Ratownik otrzymuje uporządkowaną historię |
+| 0:00-0:20 | Krótkie przedstawienie sytuacji oczekiwania na pomoc | Konkretny użytkownik i moment użycia |
+| 0:20-0:50 | Otwarcie sesji i zapis obserwacji | Ten sam wpis pojawia się w centrali |
+| 0:50-1:20 | Zatwierdzenie instrukcji i potwierdzenie wykonania | Prowadzący widzi rezultat polecenia |
+| 1:20-1:40 | Dodanie dostawy pakietu i kolejnej instrukcji | Wyposażenie jest powiązane z działaniem |
+| 1:40-2:20 | Utrata internetu, lokalny wpis i odzyskanie połączenia | Rozróżnienie zapisu lokalnego od odbioru w centrali |
+| 2:20-3:00 | Widok przekazania | Ratownik otrzymuje uporządkowaną historię |
 
 Jeśli formularz konkursowy wymaga filmu do 60 sekund, skrócić pokaz do: obserwacja → instrukcja → utrata internetu → synchronizacja → przekazanie.
 
@@ -418,11 +418,11 @@ Jeśli zgłoszenie obejmuje działanie bez internetu, trzeba również pokazać 
 
 ## 18. Źródła i granice
 
-- [Transkrypcja prezentacji TOPR](/Users/maciejklepacki/Downloads/TAURON_Arena_2_pol.txt) — przypadki oczekiwania na pomoc, transportów cargo i dostaw wyposażenia. Transkrypcja zawiera błędy rozpoznawania mowy; szczegóły operacyjne należy potwierdzić u prelegenta.
-- [Research HackYeah 2026](/Users/maciejklepacki/Documents/ChatGPT/HackYeah/HACKYEAH_2026_RESEARCH.md) i [plan zespołu](/Users/maciejklepacki/Documents/ChatGPT/HackYeah/HACKYEAH_2026_PLAN_JUTRO.md) — kontekst konkursu i zespołu, przygotowany przed startem wydarzenia.
-- [Kategorie HackYeah](https://hackyeah.pl/tasks-prizes) — publiczne opisy Sport & Healthcare i Defence. Dopasowanie oraz wymagane materiały trzeba sprawdzić z pełnym briefem na miejscu.
-- [Fundacja GOPR: bezpieczeństwo](https://fundacja.gopr.pl/bezpieczenstwo/) — opis połączenia z ratownikiem i przekazania lokalizacji przez Ratunek; nie jest pełnym audytem funkcji aplikacji.
-- [Apple: temperatura nadgarstka](https://support.apple.com/en-ie/guide/watch/-apd526d20feb/watchos) — granica proponowanego wykorzystania pomiarów.
-- [Apple: konfiguracja HealthKit](https://developer.apple.com/documentation/xcode/configuring-healthkit-access) — kontekst osobnej integracji natywnej.
+- [Transkrypcja prezentacji TOPR](/Users/maciejklepacki/Downloads/TAURON_Arena_2_pol.txt) - przypadki oczekiwania na pomoc, transportów cargo i dostaw wyposażenia. Transkrypcja zawiera błędy rozpoznawania mowy; szczegóły operacyjne należy potwierdzić u prelegenta.
+- [Research HackYeah 2026](/Users/maciejklepacki/Documents/ChatGPT/HackYeah/HACKYEAH_2026_RESEARCH.md) i [plan zespołu](/Users/maciejklepacki/Documents/ChatGPT/HackYeah/HACKYEAH_2026_PLAN_JUTRO.md) - kontekst konkursu i zespołu, przygotowany przed startem wydarzenia.
+- [Kategorie HackYeah](https://hackyeah.pl/tasks-prizes) - publiczne opisy Sport & Healthcare i Defence. Dopasowanie oraz wymagane materiały trzeba sprawdzić z pełnym briefem na miejscu.
+- [Fundacja GOPR: bezpieczeństwo](https://fundacja.gopr.pl/bezpieczenstwo/) - opis połączenia z ratownikiem i przekazania lokalizacji przez Ratunek; nie jest pełnym audytem funkcji aplikacji.
+- [Apple: temperatura nadgarstka](https://support.apple.com/en-ie/guide/watch/-apd526d20feb/watchos) - granica proponowanego wykorzystania pomiarów.
+- [Apple: konfiguracja HealthKit](https://developer.apple.com/documentation/xcode/configuring-healthkit-access) - kontekst osobnej integracji natywnej.
 
 Przypadki medyczne, ekrany, model danych i architektura w tym dokumencie są propozycją projektu. Nie są procedurą TOPR ani uzgodnioną specyfikacją wdrożenia.

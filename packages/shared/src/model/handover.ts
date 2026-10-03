@@ -28,7 +28,7 @@ export interface FieldState {
 export interface MissingInformationItem {
   fieldKey: string;
   label: string;
-  /** `unknown` — świadek odpowiedział „nie wiem”; `not-asked` — odpowiedzi nie otrzymano. */
+  /** `unknown` - świadek odpowiedział „nie wiem”; `not-asked` - odpowiedzi nie otrzymano. */
   reason: 'unknown' | 'not-asked';
 }
 
@@ -65,7 +65,7 @@ export interface HandoverReport {
 
 export interface AiSummarySentence {
   text: string;
-  /** Odnośniki do wpisów osi czasu — warunek kontroli z sekcji 9. */
+  /** Odnośniki do wpisów osi czasu - warunek kontroli z sekcji 9. */
   entryIds: string[];
 }
 
@@ -74,7 +74,7 @@ export interface AiSummaryDraft {
   incidentId: string;
   text: string;
   sentences: AiSummarySentence[];
-  /** Odnośniki do wpisów osi czasu — warunek kontroli z sekcji 9. */
+  /** Odnośniki do wpisów osi czasu - warunek kontroli z sekcji 9. */
   citedEntryIds: string[];
   /** Zdania odrzucone przez kontrolę (brak odnośnika, treść diagnostyczna). */
   rejectedCount: number;

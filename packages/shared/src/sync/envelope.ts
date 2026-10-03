@@ -2,7 +2,7 @@ import type { Timestamp } from '../model/common.js';
 
 /**
  * Koperta każdego wpisu wysyłanego z telefonu.
- * Serwer przyjmuje ponowiony wpis tylko raz — po `entryId` (reguły 1 i 2).
+ * Serwer przyjmuje ponowiony wpis tylko raz - po `entryId` (reguły 1 i 2).
  */
 export interface SyncEnvelope<TPayload> {
   entryId: string;

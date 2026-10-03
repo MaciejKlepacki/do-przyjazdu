@@ -1,7 +1,7 @@
 import type { Author, DualTimestamps } from './common.js';
 
 /**
- * Obiekt „Wyposażenie”. Dostawa dronem to wpis dyspozytora —
+ * Obiekt „Wyposażenie”. Dostawa dronem to wpis dyspozytora -
  * prototyp nie komunikuje się z dronem (sekcja 12).
  */
 export interface EquipmentItem {

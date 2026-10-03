@@ -8,7 +8,7 @@ import type { InboundSms } from './sms.js';
 import type { Timestamp } from './common.js';
 
 /**
- * Oś czasu z sekcji 6.7. Wpisu nie usuwa się — poprawka ma własny czas i autora (sekcja 8).
+ * Oś czasu z sekcji 6.7. Wpisu nie usuwa się - poprawka ma własny czas i autora (sekcja 8).
  * SMS przyjęty przez odbiornik jest osobnym zdarzeniem osi czasu (reguła 8).
  * `at` to czas po stronie serwera; czas urządzenia jest w danych wpisu.
  * `id` służy jako odnośnik w szkicu AI (sekcja 9).

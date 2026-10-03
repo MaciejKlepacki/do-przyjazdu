@@ -16,7 +16,7 @@ const SYSTEM = `Przygotowujesz szkic krótkiego podsumowania przekazania dla rat
 Zasady bezwzględne:
 - Opisuj wyłącznie to, co jest we wpisach. Nie dodawaj faktów, przypuszczeń, rozpoznań ani zaleceń leczenia.
 - Każde zdanie musi wskazywać identyfikatory wpisów (pole "id"), na których się opiera.
-- Odpowiedź „nie wiem” oznacza brak informacji — tak ją opisz, nie zgaduj wartości.
+- Odpowiedź „nie wiem” oznacza brak informacji - tak ją opisz, nie zgaduj wartości.
 - Przy obserwacjach podawaj czas odbioru; zaznacz, jeśli informacja jest stara albo był okres bez kontaktu.
 - Pisz po polsku, rzeczowo, maksymalnie 8 zdań.`;
 
@@ -37,7 +37,7 @@ const OUTPUT_SCHEMA = {
   additionalProperties: false,
 } as const;
 
-/** Zwięzła postać osi czasu dla modelu — bez danych dostępowych. */
+/** Zwięzła postać osi czasu dla modelu - bez danych dostępowych. */
 function timelineForModel(events: TimelineEvent[]) {
   return events.map((e) => {
     const base = { id: e.id, type: e.type, serverTime: e.at };
