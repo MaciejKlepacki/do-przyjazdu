@@ -4,7 +4,7 @@ import type { Author, DeliveryChannel, DualTimestamps, InformationSource, MaybeK
 export interface ObservationField {
   key: string;
   label: string;
-  /** Formularz nie zmusza świadka do diagnozy — tylko do opisu tego, co widzi. */
+  /** Formularz nie zmusza świadka do diagnozy - tylko do opisu tego, co widzi. */
   kind: 'single-choice' | 'multi-choice' | 'short-text' | 'number';
   options?: Array<{ value: string; label: string }>;
   unit?: string;
@@ -19,7 +19,7 @@ export interface ObservationAnswer {
 
 /** Obiekt „Obserwacja” z sekcji 11. */
 export interface Observation {
-  /** ID wpisu nadane na urządzeniu — klucz idempotencji (reguła 1 i 2). */
+  /** ID wpisu nadane na urządzeniu - klucz idempotencji (reguła 1 i 2). */
   entryId: string;
   incidentId: string;
   author: Author;

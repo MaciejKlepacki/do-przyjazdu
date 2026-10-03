@@ -26,7 +26,7 @@ export type InformationSource =
   | 'dispatcher-assessment'
   | 'simulated';
 
-/** Brak danych to osobny stan — odpowiedź „nie wiem” nie jest wartością (sekcja 8). */
+/** Brak danych to osobny stan - odpowiedź „nie wiem” nie jest wartością (sekcja 8). */
 export type MaybeKnown<T> = { known: true; value: T } | { known: false; reason: 'unknown' | 'not-asked' };
 
 /** Kanał, którym wpis dotarł do centrali (sekcja 10). */

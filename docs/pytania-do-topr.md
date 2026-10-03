@@ -1,6 +1,6 @@
 # Pytania do TOPR i mentorów (sekcja 16)
 
-Odpowiedzi wpisywać pod pytaniami — decydują o zakresie MVP i kryteriach obcięcia.
+Odpowiedzi wpisywać pod pytaniami - decydują o zakresie MVP i kryteriach obcięcia.
 
 1. Jak dziś przekazujecie instrukcje osobie oczekującej na ratowników?
 2. Jak zapisujecie, że polecenie zostało wykonane albo było niewykonalne?

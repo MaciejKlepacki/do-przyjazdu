@@ -2,7 +2,7 @@
 // brak nowych faktów, brak treści diagnostycznych i zaleceń leczenia.
 import type { AiSummarySentence } from '@do-przyjazdu/shared';
 
-/** Słowa wskazujące na rozpoznanie lub zalecenie — takie zdania odrzucamy (sekcje 6 i 9). */
+/** Słowa wskazujące na rozpoznanie lub zalecenie - takie zdania odrzucamy (sekcje 6 i 9). */
 const FORBIDDEN = [
   /diagnoz/i,
   /rozpozna(nie|no|ję)/i,

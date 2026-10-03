@@ -1,68 +1,49 @@
 # Do przyjazdu
 
-Prototyp: prowadzenie świadka przez instrukcje dyspozytora podczas oczekiwania na ratowników
-i przekazanie historii zdarzenia zespołowi, który dociera na miejsce.
+A HackYeah 2026 prototype for the time between calling for help and a responder arriving. A witness follows dispatcher-approved instructions, records observations and hands over the incident history.
 
-Koncepcja, zakres i granice: [DO_PRZYJAZDU.md](./DO_PRZYJAZDU.md).
+## Features
 
-**Status:** działający prototyp MVP (sekcja 6): telefon świadka z pracą offline, panel dyspozytora,
-widok przekazania, symulowany kanał SMS, opcjonalny szkic AI. Treść scenariusza w
-`apps/api/src/scenario/demoScenario.ts` jest **robocza** i czeka na lekarza. Prototyp nie jest
-narzędziem ratunkowym, nie integruje się z TOPR ani z numerami alarmowymi, a dane w demo są fikcyjne.
+- Witness access through a private link, without creating an account.
+- Versioned instructions, dispatcher approval and witness responses.
+- Cached instructions and a local queue for interrupted connections. Device time and server receipt time remain separate.
+- Dispatcher review, incident timeline and responder handover, available without a language model.
+- A guided demo with the witness and dispatcher side by side, a simulated connection interruption and a new fictional incident for each attempt.
 
-## Struktura
+## Run locally
 
-```text
-apps/
-  api/      Node.js + SQLite: sesje, uprawnienia, historia, synchronizacja
-  web/      React + TS (PWA): telefon świadka, panel dyspozytora, widok przekazania
-packages/
-  shared/   wspólny model danych i reguły synchronizacji
-docs/       scenariusz demo, checklista sprawdzeń, decyzje, pytania do TOPR
-```
-
-Mapowanie katalogów na sekcje dokumentu: [docs/architektura.md](./docs/architektura.md).
-
-## Uruchomienie
+Use Node.js 24 and npm. Install dependencies:
 
 ```bash
-npm install
-cp .env.example .env        # ustaw DISPATCHER_PASSWORD i SESSION_SECRET
-npm run db:migrate
-npm run db:seed             # jedno fikcyjne zdarzenie ze scenariusza
-npm run dev                 # API + frontend
+npm ci
 ```
 
-`npm run dev` uruchamia API (port 3000) i Vite (port 5173). Seed wypisuje link świadka i adres panelu.
-Konta panelu: `dyspozytor` i `ratownik`, hasło z `DISPATCHER_PASSWORD`.
-
-Przed każdą próbą pokazu: `npm run demo:reset` (nowy link świadka, chyba że ustawiono `DEMO_WITNESS_TOKEN`),
-a na telefonie „Moje wpisy → Wyczyść dane z telefonu”.
-
-**Praca offline wymaga buildu produkcyjnego i HTTPS** (Service Worker nie działa w trybie dev ani po
-zwykłym HTTP na adresie IP). Jeden serwer podaje API i frontend:
+Create the local configuration:
 
 ```bash
-npm run build && npm start   # http://localhost:3000; przed telefonem postaw HTTPS (np. tunel lub reverse proxy)
+cp .env.example .env
 ```
 
-Testy (checklista z sekcji 14): `npm test`.
+Set your own `DISPATCHER_PASSWORD` and `SESSION_SECRET` in `.env`. Start the built application and API together:
 
-## Zasady, które obowiązują w kodzie
+```bash
+npm run demo
+```
 
-Pochodzą z sekcji 8–10 dokumentu i nie są kwestią gustu:
+Open `http://localhost:5174`. Sign in as `dyspozytor` or `ratownik` with `DISPATCHER_PASSWORD`. The demo uses its own `data/presentation.sqlite`, disables the optional model and keeps SMS simulated. Every new attempt preserves previous incident history. If the port is occupied:
 
-- świadek widzi instrukcję dopiero po jej zatwierdzeniu przez dyspozytora;
-- każdy wpis ma czas urządzenia i czas odbioru przez serwer, zapisane oddzielnie;
-- odpowiedź dotyczy konkretnej wersji instrukcji; potwierdzenie starszej nie potwierdza nowszej;
-- wpisu nie usuwa się — poprawka to nowy wpis z własnym autorem i czasem;
-- „nie wiem” zostaje brakiem danych, nie jest zamieniane na wartość;
-- interfejs rozróżnia „zapisano na urządzeniu” i „otrzymano w centrali”;
-- widok przekazania powstaje bez AI; szkic AI jest osobnym obiektem z odnośnikami do wpisów;
-- AI nie zmienia statusów, nie zatwierdza decyzji i nie dopisuje faktów do historii;
-- SMS to zwykła wiadomość tekstowa wysyłana ręcznie przez świadka, bez gwarancji doręczenia.
+```bash
+npm run demo -- --port 5175
+```
 
-## Podział pracy
+For development, `npm run dev` starts the API on port 3000 and Vite on 5173. Run `npm run db:migrate` and `npm run db:seed` first. Offline reopening requires a production build and a secure origin: localhost works on the same computer, while a separate phone requires HTTPS. A plain LAN address does not provide the full PWA offline behavior.
 
-Sekcja 15 dokumentu: telefon świadka i synchronizacja / panel i przekazanie / backend i uruchomienie demo /
-scenariusz medyczny. Kolejność realizacji i kryteria obcięcia zakresu — tam samo.
+Checks: `npm run typecheck`, `npm test`, `npm run build`. No lint command is configured.
+
+Presentation steps: [docs/scenariusz-demo.md](docs/scenariusz-demo.md). Full project guide: [docs/przewodnik-projektu.md](docs/przewodnik-projektu.md). Scope and decisions: [DO_PRZYJAZDU.md](DO_PRZYJAZDU.md).
+
+## Data and credits
+
+All demo incidents are fictional. Scenario content in `apps/api/src/scenario/demoScenario.ts` is provisional and must be reviewed by the team's physician. This prototype does not call emergency services or integrate with TOPR. SMS delivery is not implemented in the local demo.
+
+Built with React, Vite, Express and SQLite. Icons use Lucide. The brand symbol is in `apps/web/public/brand-symbol.svg`; PWA icons can be regenerated with `node scripts/generate-icons.mjs`.

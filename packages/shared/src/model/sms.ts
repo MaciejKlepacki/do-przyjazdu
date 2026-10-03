@@ -2,7 +2,7 @@ import type { Timestamp } from './common.js';
 
 /**
  * Status awaryjnego SMS-a widoczny dla świadka (sekcja 10).
- * „declared-sent” to deklaracja świadka — przeglądarka nie wie, czy SMS wyszedł.
+ * „declared-sent” to deklaracja świadka - przeglądarka nie wie, czy SMS wyszedł.
  * Dopiero „received-by-center” oznacza odbiór przez centralę, a „read-by-lead” przeczytanie.
  */
 export type SmsFallbackStatus = 'prepared' | 'sms-app-opened' | 'declared-sent' | 'received-by-center' | 'read-by-lead';
@@ -15,7 +15,7 @@ export interface InboundSms {
   claimedEntryId: string | null;
   linkedIncidentId: string | null;
   linkedEntryId: string | null;
-  /** Nieznana sesja lub nieczytelna treść — ręczna weryfikacja, nigdy autoprzypisanie (reguła 9). */
+  /** Nieznana sesja lub nieczytelna treść - ręczna weryfikacja, nigdy autoprzypisanie (reguła 9). */
   needsManualReview: boolean;
   receivedTime: Timestamp;
   readById: string | null;
@@ -27,7 +27,7 @@ export interface InboundSms {
 /** Prefiks rozpoznawany przez odbiornik. */
 export const SMS_PREFIX = 'DP';
 
-/** Limit treści — SMS ma być krótki i bez zbędnych danych medycznych. */
+/** Limit treści - SMS ma być krótki i bez zbędnych danych medycznych. */
 export const SMS_TEXT_MAX = 100;
 
 export interface SmsBody {
@@ -44,7 +44,7 @@ export function formatSmsBody(body: SmsBody): string {
   return `${SMS_PREFIX} ${body.incidentId} #${body.entryId} ${text}${gps}`;
 }
 
-/** Zwraca null, gdy wiadomość nie ma wymaganego formatu — wtedy trafia do ręcznej weryfikacji. */
+/** Zwraca null, gdy wiadomość nie ma wymaganego formatu - wtedy trafia do ręcznej weryfikacji. */
 export function parseSmsBody(raw: string): SmsBody | null {
   const match = /^\s*DP\s+(\S+)\s+#(\S+)\s*(.*?)\s*(?:GPS:(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?))?\s*$/is.exec(raw);
   if (!match) return null;
