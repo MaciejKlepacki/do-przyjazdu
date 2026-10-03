@@ -16,9 +16,10 @@
     "test": "npm run test --workspaces --if-present",
     "db:migrate": "npm run db:migrate --workspace=apps/api",
     "db:seed": "npm run db:seed --workspace=apps/api",
-    "demo:reset": "npm run demo:reset --workspace=apps/api"
+    "demo:reset": "npm run demo:reset --workspace=apps/api",
+    "start": "npm run start --workspace=apps/api"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22.13"
   }
 }

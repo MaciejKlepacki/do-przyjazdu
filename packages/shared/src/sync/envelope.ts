@@ -44,3 +44,26 @@ export interface ConnectivityState {
   /** Kiedy pobrano aktualnie wyświetlane instrukcje. */
   instructionsFetchedAt: Timestamp | null;
 }
+
+/** Treść wpisów wysyłanych przez świadka, zależnie od `kind`. */
+export interface ObservationPayload {
+  answers: import('../model/observation.js').ObservationAnswer[];
+  freeText: string | null;
+}
+
+export interface AcknowledgementPayload {
+  instructionId: string;
+  /** Wersja widziana przez świadka w chwili odpowiedzi (reguła 4). */
+  instructionVersion: number;
+  result: import('../model/acknowledgement.js').AcknowledgementResult;
+  comment: string | null;
+}
+
+export interface SituationChangePayload {
+  text: string;
+}
+
+export type WitnessEnvelope =
+  | (SyncEnvelope<ObservationPayload> & { kind: 'observation' })
+  | (SyncEnvelope<AcknowledgementPayload> & { kind: 'acknowledgement' })
+  | (SyncEnvelope<SituationChangePayload> & { kind: 'situation-change' });

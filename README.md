@@ -5,7 +5,9 @@ i przekazanie historii zdarzenia zespołowi, który dociera na miejsce.
 
 Koncepcja, zakres i granice: [DO_PRZYJAZDU.md](./DO_PRZYJAZDU.md).
 
-**Status:** szkielet repozytorium. Kod nie jest jeszcze zaimplementowany. Prototyp nie jest
+**Status:** działający prototyp MVP (sekcja 6): telefon świadka z pracą offline, panel dyspozytora,
+widok przekazania, symulowany kanał SMS, opcjonalny szkic AI. Treść scenariusza w
+`apps/api/src/scenario/demoScenario.ts` jest **robocza** i czeka na lekarza. Prototyp nie jest
 narzędziem ratunkowym, nie integruje się z TOPR ani z numerami alarmowymi, a dane w demo są fikcyjne.
 
 ## Struktura
@@ -31,7 +33,20 @@ npm run db:seed             # jedno fikcyjne zdarzenie ze scenariusza
 npm run dev                 # API + frontend
 ```
 
-Przed każdą próbą pokazu: `npm run demo:reset`.
+`npm run dev` uruchamia API (port 3000) i Vite (port 5173). Seed wypisuje link świadka i adres panelu.
+Konta panelu: `dyspozytor` i `ratownik`, hasło z `DISPATCHER_PASSWORD`.
+
+Przed każdą próbą pokazu: `npm run demo:reset` (nowy link świadka, chyba że ustawiono `DEMO_WITNESS_TOKEN`),
+a na telefonie „Moje wpisy → Wyczyść dane z telefonu”.
+
+**Praca offline wymaga buildu produkcyjnego i HTTPS** (Service Worker nie działa w trybie dev ani po
+zwykłym HTTP na adresie IP). Jeden serwer podaje API i frontend:
+
+```bash
+npm run build && npm start   # http://localhost:3000; przed telefonem postaw HTTPS (np. tunel lub reverse proxy)
+```
+
+Testy (checklista z sekcji 14): `npm test`.
 
 ## Zasady, które obowiązują w kodzie
 

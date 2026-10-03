@@ -16,6 +16,10 @@ export interface Instruction {
   text: string;
   /** Opcjonalna ilustracja przygotowana dla scenariusza. */
   illustrationUrl: string | null;
+  /** Kolejność czynności w scenariuszu. */
+  sortOrder: number;
+  /** Instrukcja przypisana do pakietu dostarczonego dronem (sekcja 6, funkcje opcjonalne). */
+  packageId: string | null;
   authorId: string;
   approvedBy: Author | null;
   status: InstructionStatus;

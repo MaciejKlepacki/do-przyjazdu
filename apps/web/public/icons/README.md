@@ -1,2 +1,1 @@
-Ikony PWA do uzupełnienia: `icon-192.png`, `icon-512.png`, `icon-maskable-512.png`.
-Bez nich instalacja na telefonie pokaże domyślną ikonę przeglądarki.
+Ikony PWA generowane skryptem `node scripts/generate-icons.mjs` (z katalogu głównego repo).
