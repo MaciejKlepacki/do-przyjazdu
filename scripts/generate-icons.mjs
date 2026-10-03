@@ -1,5 +1,3 @@
-// Generuje ikony PWA (bez zależności): znak „Do przyjazdu” — czerwony gradient, białe szczyty.
-// Uruchomienie: node scripts/generate-icons.mjs
 import { writeFileSync } from 'node:fs';
 import { deflateSync } from 'node:zlib';
 
@@ -36,42 +34,37 @@ function png(size, pixel) {
   return Buffer.concat([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), chunk('IHDR', ihdr), chunk('IDAT', deflateSync(raw)), chunk('IEND', Buffer.alloc(0))]);
 }
 
-// Ten sam znak co logo w aplikacji: czerwony gradient, białe szczyty, krzyżyk nad szczytem.
-// Współrzędne w siatce 64×64 (jak SVG w components/ui.tsx), wygładzanie 4×4 próbki na piksel.
-const MOUNTAIN = [[8, 48], [24, 25], [31, 34], [40, 19], [56, 48]];
-const inPoly = (x, y, poly) => {
-  let inside = false;
-  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
-    const [xi, yi] = poly[i];
-    const [xj, yj] = poly[j];
-    if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) inside = !inside;
-  }
-  return inside;
-};
-const inCross = (x, y) => (Math.abs(y - 12) < 1.3 && Math.abs(x - 32) < 4.3) || (Math.abs(x - 32) < 1.3 && Math.abs(y - 12) < 4.3);
+const points = [[16,40],[25,40]];
+for (let n=1;n<=40;n++) {
+  const t=n/40, a=1-t;
+  points.push([a*a*a*25+3*a*a*t*35+3*a*t*t*29+t*t*t*40, a*a*a*40+3*a*a*t*40+3*a*t*t*24+t*t*t*24]);
+}
+points.push([48,24]);
 
-function icon(scale) {
-  // scale < 1 zostawia margines bezpieczny dla ikon maskable.
-  return (u, v) => {
-    const top = [255, 106, 85];
-    const bottom = [232, 38, 28];
-    const bg = top.map((c, i) => Math.round(c + (bottom[i] - c) * v));
-    let white = 0;
-    const N = 4;
-    for (let sy = 0; sy < N; sy++) {
-      for (let sx = 0; sx < N; sx++) {
-        const x = ((u + sx / (N * 640) - 0.5) / scale + 0.5) * 64;
-        const y = ((v + sy / (N * 640) - 0.5) / scale + 0.5) * 64;
-        if (inPoly(x, y, MOUNTAIN) || inCross(x, y)) white++;
-      }
+function segmentDistance(x,y,a,b) {
+  const dx=b[0]-a[0], dy=b[1]-a[1];
+  const t=Math.max(0,Math.min(1,((x-a[0])*dx+(y-a[1])*dy)/(dx*dx+dy*dy)));
+  return Math.hypot(x-a[0]-t*dx,y-a[1]-t*dy);
+}
+
+function icon(size,scale) {
+  return (u,v) => {
+    const color=[0,0,0];
+    const samples=4;
+    for(let sy=0;sy<samples;sy++)for(let sx=0;sx<samples;sx++) {
+      const x=((u+(sx+.5)/(samples*size)-.5)/scale+.5)*64;
+      const y=((v+(sy+.5)/(samples*size)-.5)/scale+.5)*64;
+      const orange=Math.hypot(x-16,y-40)<=5;
+      const cream=Math.hypot(x-48,y-24)<=5 || points.some((p,n)=>n>0 && segmentDistance(x,y,points[n-1],p)<=2.5);
+      const sample=orange?[237,135,86]:cream?[255,254,248]:[25,46,40];
+      for(let k=0;k<3;k++)color[k]+=sample[k]/(samples*samples);
     }
-    const a = white / (N * N);
-    return [...bg.map((c) => Math.round(c + (255 - c) * a)), 255];
+    return [...color.map(Math.round),255];
   };
 }
 
 const out = 'apps/web/public/icons/';
-writeFileSync(out + 'icon-192.png', png(192, icon(1)));
-writeFileSync(out + 'icon-512.png', png(512, icon(1)));
-writeFileSync(out + 'icon-maskable-512.png', png(512, icon(0.75)));
+writeFileSync(out + 'icon-192.png', png(192, icon(192,1)));
+writeFileSync(out + 'icon-512.png', png(512, icon(512,1)));
+writeFileSync(out + 'icon-maskable-512.png', png(512, icon(512,0.75)));
 console.log('Ikony zapisane w', out);

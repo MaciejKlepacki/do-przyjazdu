@@ -16,7 +16,7 @@ export function OfflineNotice({ fetchedAt, onSms }: { fetchedAt: string; onSms: 
           <StalenessLabel prefix="Instrukcje pobrano" at={fetchedAt} staleAfterSeconds={60} />
         </p>
         <p className="xsmall" style={{ opacity: 0.7 }}>
-          Jeśli możesz dzwonić — rozmawiaj z prowadzącym. Ta strona nie wzywa pomocy i nie przekazuje lokalizacji.
+          Jeśli możesz dzwonić - rozmawiaj z prowadzącym. Ta strona nie wzywa pomocy i nie przekazuje lokalizacji.
         </p>
         {onSms && (
           <div>

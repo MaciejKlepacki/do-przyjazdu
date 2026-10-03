@@ -1,0 +1,229 @@
+import type { HandoverReport, Incident, IncidentPanelResponse, TimelineEvent, WitnessLinkCreated } from '@do-przyjazdu/shared';
+import { ArrowRight, ArrowUpRight, Check, ClipboardList, Eye, LoaderCircle, Plus, Radio, Wifi, WifiOff } from 'lucide-react';
+import { useCallback, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Logo, plural, Splash } from '../components/ui';
+import { useAuth } from '../dispatcher/auth';
+import { InstructionList } from '../dispatcher/InstructionList';
+import { FieldStateList } from '../dispatcher/ObservationReview';
+import { ReviewQueue } from '../dispatcher/ReviewQueue';
+import { Timeline } from '../dispatcher/Timeline';
+import { api, errorMessage } from '../lib/api';
+import { OUTCOME_LABEL } from '../lib/labels';
+import { useNow, usePolling } from '../lib/polling';
+import { formatTime } from '../lib/time';
+import { WitnessApp } from '../witness/WitnessApp';
+
+interface DemoSession { incidentId: string; token: string; startedAt: number }
+type View = 'contact' | 'instructions' | 'timeline' | 'handover';
+const views: { id: View; label: string }[] = [{ id: 'contact', label: 'Sytuacja' }, { id: 'instructions', label: 'Polecenia' }, { id: 'timeline', label: 'Historia' }, { id: 'handover', label: 'Przekazanie' }];
+
+function savedDemo(): DemoSession | null {
+  try {
+    const value = JSON.parse(sessionStorage.getItem('dp-presentation') ?? 'null');
+    return value && typeof value.incidentId === 'string' && typeof value.token === 'string' && typeof value.startedAt === 'number' ? value : null;
+  } catch { return null; }
+}
+
+export function DemoStudio() {
+  const { me } = useAuth();
+  const [session, setSession] = useState<DemoSession | null>(savedDemo);
+  const [creating, setCreating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const create = async () => {
+    if (creating) return;
+    setCreating(true);
+    setError(null);
+    try {
+      const incident = await api<Incident>('/incidents', { method: 'POST', body: { description: 'Szlak w rejonie Doliny Pięciu Stawów (fikcyjne). Dwie osoby, jedna po upadku na szlaku, druga wezwała pomoc. Pogoda pogarsza się.' } });
+      const link = await api<WitnessLinkCreated>(`/incidents/${incident.id}/witness-links`, { method: 'POST' });
+      await api(`/incidents/${incident.id}/responders`, { method: 'POST', body: { responderId: 'ratownik' } });
+      const next = { incidentId: incident.id, token: link.token, startedAt: Date.now() };
+      setSession(next);
+      try { sessionStorage.setItem('dp-presentation', JSON.stringify(next)); } catch { /*brak pamieci sesji*/ }
+    } catch (err) { setError(errorMessage(err)); }
+    finally { setCreating(false); }
+  };
+
+  if (!me.demoMode || me.user.role !== 'dispatcher') return <Splash title="Pokaz prowadzi dyspozytor">
+    <p>Ten widok jest dostępny dla dyspozytora w trybie demonstracyjnym.</p>
+    <Link to="/dispatcher" className="btn btn-primary">Przejdź do panelu</Link>
+  </Splash>;
+  return (
+    <div className="demo-studio">
+      <header className="studio-nav">
+        <Link to="/" className="brand">
+          <Logo size={34} />
+          <span className="brand-name">Do przyjazdu<span className="wordmark-stop">.</span>
+          </span>
+        </Link>
+        <span className="studio-mode">Pokaz na fikcyjnych danych</span>
+        <Link to="/dispatcher" className="brand-text-link">Panel zespołu <ArrowUpRight size={16} />
+        </Link>
+      </header>
+      {!session ? <main className="studio-start">
+        <span className="studio-start-line" aria-hidden />
+        <p>Jedno zdarzenie. Cały przepływ.</p>
+        <h1>Od pierwszej odpowiedzi<br />do przekazania ratownikowi.</h1>
+        <p className="studio-start-description">Uruchom osobną sesję pokazu. Po lewej obsługujesz telefon świadka. Po prawej zatwierdzasz polecenia i obserwujesz, co dotarło do centrali.</p>
+        <button className="btn btn-primary btn-lg" disabled={creating} onClick={() => void create()}>{creating ? <LoaderCircle className="spin" size={18} /> : <ArrowRight size={18} />} Rozpocznij pokaz</button>
+        <p className="hint">Każda próba tworzy nowe fikcyjne zdarzenie. Poprzednia historia zostaje w panelu.</p>
+      </main> : <LiveDemo key={session.incidentId} session={session} onNew={create} creating={creating} />}
+      {error && <p className="studio-error error-text" role="alert">{error}</p>}
+    </div>
+  );
+}
+
+function LiveDemo({ session, onNew, creating }: { session: DemoSession; onNew: () => Promise<void>; creating: boolean }) {
+  const [paused, setPaused] = useState(false);
+  const [pending, setPending] = useState(0);
+  const [view, setView] = useState<View>('contact');
+  const [offlineIds, setOfflineIds] = useState<string[]>([]);
+  const [resynced, setResynced] = useState(false);
+  const [copyError, setCopyError] = useState(false);
+  const now = useNow(1000);
+  const panel = usePolling(() => api<IncidentPanelResponse>(`/incidents/${session.incidentId}`), 2000, [session.incidentId]);
+  const timeline = usePolling(() => api<TimelineEvent[]>(`/incidents/${session.incidentId}/timeline`), 2000, [session.incidentId]);
+  const report = usePolling(() => api<HandoverReport>(`/incidents/${session.incidentId}/handover`), 2000, [session.incidentId]);
+  const data = panel.data;
+  const elapsed = Math.max(0, Math.floor((now - session.startedAt) / 1000));
+  const refresh = () => { void panel.refresh(); void timeline.refresh(); void report.refresh(); };
+  const queueChanged = useCallback((pendingIds: string[], receivedIds: string[]) => {
+    setPending(pendingIds.length);
+    if (paused && pendingIds.length > 0) setOfflineIds(previous => pendingIds.every(id => previous.includes(id)) ? previous : [...new Set([...previous, ...pendingIds])]);
+    if (!paused && offlineIds.length > 0 && offlineIds.every(id => receivedIds.includes(id))) setResynced(true);
+  }, [paused, offlineIds]);
+  const steps = [
+    { label: 'Obserwacja', done: Boolean(data?.observations.some(o => o.author.kind === 'witness')) },
+    { label: 'Polecenie', done: Boolean(data?.instructions.some(i => i.status === 'approved')) },
+    { label: 'Odpowiedź', done: Boolean(data?.acknowledgements.length) },
+    { label: 'Powrót łączności', done: resynced },
+    { label: 'Odczyt raportu', done: view === 'handover' },
+  ];
+  const nextStep = steps.findIndex(s => !s.done);
+  const guide = [
+    'Dołącz na telefonie i zapisz pierwszą obserwację.',
+    'Otwórz Polecenia. Zatwierdź pierwszą instrukcję w centrali.',
+    'Na telefonie wybierz Czynność i odpowiedz na polecenie.',
+    'Wstrzymaj transmisję, zapisz obserwację, potem przywróć połączenie.',
+    'Otwórz Przekazanie. Odczytaj historię, oba czasy i braki informacji.',
+  ][nextStep] ?? 'Przepływ pokazany. Pełny raport i przejęcie są dostępne w panelu zespołu.';
+  const witnessUrl = `${window.location.origin}/w/${session.token}`;
+
+  return (
+    <main className="studio-live">
+      <div className="studio-title">
+        <div>
+          <p>Jedno zdarzenie, dwa działające widoki</p>
+          <h1>Historia nie urywa się z zasięgiem.</h1>
+        </div>
+        <div className="studio-timer">
+          <span>Próba pokazu</span>
+          <strong>{String(Math.floor(elapsed / 60)).padStart(2, '0')}:{String(elapsed % 60).padStart(2, '0')}</strong>
+        </div>
+      </div>
+      <ol className="studio-steps">{steps.map((step, n) =>
+        <li key={step.label} className={step.done ? 'is-done' : n === nextStep ? 'is-current' : ''}>
+          <span>{step.done ? <Check size={14} /> : String(n + 1).padStart(2, '0')}</span>{step.label}</li>)}</ol>
+      <p className="studio-guide">{guide}</p>
+      <div className="demo-workspace">
+        <section className="demo-witness" aria-label="Telefon świadka">
+          <div className="demo-pane-title">
+            <h2>Na miejscu</h2>
+            <span>Telefon świadka</span>
+          </div>
+          <div className="demo-phone">
+            <WitnessApp witnessToken={session.token} connectionPaused={paused} embedded onQueueChange={queueChanged} />
+          </div>
+          <div className="demo-transport">
+            <button className={`btn ${paused ? 'btn-tint-orange' : 'btn-outline'}`} onClick={() => setPaused(p => !p)}>{paused ? <Wifi size={16} /> : <WifiOff size={16} />}{paused ? 'Przywróć transmisję' : 'Wstrzymaj transmisję'}</button>
+            <p>Symulacja przerwy tylko dla tego telefonu. {paused ? `${pending} ${plural(pending, 'wpis czeka', 'wpisy czekają', 'wpisów czeka')} lokalnie.` : 'Centrala pozostaje połączona.'}</p>
+          </div>
+          <div className="demo-phone-links">
+            <a href={witnessUrl} target="_blank" rel="noreferrer">Otwórz osobno <ArrowUpRight size={14} />
+            </a>
+            <button onClick={async () => { try { await navigator.clipboard.writeText(witnessUrl); setCopyError(false); } catch { setCopyError(true); } }}>Kopiuj link na telefon</button>
+          </div>{copyError && <p className="hint" role="alert">Kopiowanie niedostępne. Otwórz widok osobno i skopiuj adres.</p>}
+        </section>
+        <section className="demo-central" aria-label="Panel centrali">
+          <div className="demo-pane-title">
+            <h2>W centrali</h2>
+            <Link to={`/dispatcher/${session.incidentId}`}>{session.incidentId} <ArrowUpRight size={14} />
+            </Link>
+          </div>
+          <div className="demo-central-body">
+            <div className="demo-central-status">
+              <Radio size={17} />
+              <strong>{data?.contact.ongoingGapSince ? 'Brak kontaktu z telefonem' : data?.contact.lastWitnessContactAt ? 'Telefon nawiązał kontakt' : 'Czekamy na świadka'}</strong>
+              <span>{data?.contact.lastWitnessContactAt ? `ostatni kontakt ${formatTime(data.contact.lastWitnessContactAt)}` : 'Link gotowy do otwarcia'}</span>
+            </div>
+            {panel.error && <p className="callout callout-red" role="alert">{panel.error} Dane mogą być nieaktualne.</p>}
+            <div className="demo-counters">
+              <div>
+                <strong>{data?.observations.filter(o => o.author.kind === 'witness').length ?? 0}</strong>
+                <span>Obserwacje</span>
+              </div>
+              <div>
+                <strong>{data?.instructionOutcomes.filter(o => o.state === 'done').length ?? 0}/{data?.instructionOutcomes.length ?? 0}</strong>
+                <span>Wykonane czynności</span>
+              </div>
+              <div>
+                <strong>{data?.situationReports.filter(r => !r.reviewedAt).length ?? 0}</strong>
+                <span>Do przeglądu</span>
+              </div>
+            </div>
+            <div className="demo-view-tabs" role="tablist" aria-label="Widoki centrali">{views.map(v =>
+              <button key={v.id} role="tab" aria-selected={view === v.id} aria-controls="demo-central-content" onClick={() => setView(v.id)}>{v.label}</button>)}</div>
+            <div className="demo-central-content" id="demo-central-content" role="tabpanel" aria-label={views.find(v => v.id === view)?.label}>
+              {!data ? <p className="hint">Pobieranie danych…</p> : <>
+                {view === 'contact' && <>
+                  <h3>
+                    <Eye size={17} /> Ostatnie odpowiedzi świadka</h3>
+                  <FieldStateList fields={data.fields} fieldStates={data.fieldStates} timeMode="both" />{data.observations.filter(o => o.freeText).slice(-3).map(o =>
+                    <div className="demo-note" key={o.entryId}>
+                      <span className="quote">{o.freeText}</span>
+                      <small>zapisano {formatTime(o.times.deviceTime)} · odebrano {formatTime(o.times.receivedTime)}</small>
+                    </div>)}<h3>Zmiany wymagające przeglądu</h3>
+                  <ReviewQueue reports={data.situationReports} sms={data.sms} canManage onChange={refresh} />
+                </>}
+                {view === 'instructions' && <>
+                  <p className="demo-medical-note">Robocze treści demonstracyjne. Lekarz z zespołu zatwierdza scenariusz przed pokazem.</p>
+                  <InstructionList incidentId={session.incidentId} instructions={data.instructions} outcomes={data.instructionOutcomes} acknowledgements={data.acknowledgements} staff={data.staff} canManage onChange={refresh} />
+                </>}
+                {view === 'timeline' && <>
+                  <h3>Wspólna historia zdarzenia</h3>{timeline.error && <p className="error-text">{timeline.error}</p>}<Timeline events={timeline.data ?? []} fields={data.fields} instructions={data.instructions} staff={data.staff} />
+                </>}
+                {view === 'handover' && <>
+                  <h3>
+                    <ClipboardList size={17} /> Raport dla ratownika</h3>{report.error && <p className="error-text">{report.error} Raport może być nieaktualny.</p>}{report.data ? <DemoReport report={report.data} /> : <p className="hint">Pobieranie raportu…</p>}<Link className="btn btn-primary" to={`/handover/${session.incidentId}`}>Otwórz pełny raport <ArrowUpRight size={16} />
+                  </Link>
+                  <p className="hint">Przejęcie potwierdza przydzielony ratownik na swoim koncie.</p>
+                </>}
+              </>}
+            </div>
+          </div>
+        </section>
+      </div>
+      <footer className="studio-live-footer">
+        <p>Wpisy trafiają do tej samej bazy. Zapis na telefonie i odbiór w centrali to osobne zdarzenia.</p>
+        <button className="btn btn-outline btn-sm" disabled={creating} onClick={() => void onNew()}>{creating ? <LoaderCircle size={14} className="spin" /> : <Plus size={14} />} Nowa próba pokazu</button>
+      </footer>
+    </main>
+  );
+}
+
+function DemoReport({ report }: { report: HandoverReport }) {
+  return <div className="demo-report">
+    <p className="hint">Raport z {formatTime(report.generatedAt)}. Zbudowany z wpisów, dostępny bez modelu AI.</p>
+    <FieldStateList fields={report.fields} fieldStates={report.fieldStates} timeMode="both" />
+    <h3>Polecenia i rezultaty</h3>{report.approvedInstructions.length === 0 && <p className="hint">Brak zatwierdzonych poleceń.</p>}{report.approvedInstructions.map(i =>
+      <div key={i.id} className="demo-report-instruction">
+        <p>{i.text}</p>
+        <strong>{OUTCOME_LABEL[report.instructionOutcomes.find(o => o.instructionId === i.id)?.state ?? 'awaiting']}</strong>
+      </div>)}<h3>Co nadal wymaga uwagi</h3>
+    <p>{report.missingInformation.length} pól bez znanej odpowiedzi · {report.unresolvedDifficulties.length} trudności · {report.openSituationReports.length} zgłoszeń bez przeglądu · {report.contactGaps.length} przerw w kontakcie</p>{report.latestObservations.filter(o => o.freeText).map(o =>
+      <div className="demo-note" key={o.entryId}>
+        <span className="quote">{o.freeText}</span>
+        <small>telefon {formatTime(o.times.deviceTime)} · centrala {formatTime(o.times.receivedTime)}</small>
+      </div>)}</div>;
+}

@@ -1,6 +1,3 @@
-// Jedna instrukcja na ekranie, duży tekst, numer wersji, opcjonalna ilustracja
-// i trzy przyciski: wykonane / nie mogę wykonać / potrzebuję wyjaśnienia.
-// Karta przesuwa się palcem między czynnościami; „wykonane” przechodzi do następnej.
 import { instructionOutcome, type AcknowledgementResult, type Instruction, type InstructionOutcomeState } from '@do-przyjazdu/shared';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Check, ChevronRight, ChevronsLeftRight, CircleQuestionMark, MessageSquarePlus, Package, Radio, TriangleAlert, X } from 'lucide-react';
@@ -47,6 +44,7 @@ export function CurrentActionScreen({ instructions, entries, onAnswer }: Props) 
   const [busy, setBusy] = useState(false);
   const [celebrate, setCelebrate] = useState(false);
   const [direction, setDirection] = useState(1);
+  const [error, setError] = useState<string | null>(null);
 
   if (instructions.length === 0) {
     return (
@@ -80,20 +78,23 @@ export function CurrentActionScreen({ instructions, entries, onAnswer }: Props) 
   };
 
   const answer = async (result: AcknowledgementResult) => {
+    if (busy) return;
     setBusy(true);
+    setError(null);
     haptic(result === 'done' ? [12, 50, 22] : 24);
     try {
       await onAnswer(current, result, comment.trim() || null);
       setComment('');
       setCommentOpen(false);
       if (result === 'done') {
-        // Chwila potwierdzenia, potem kolejna niewykonana czynność.
         setCelebrate(true);
         await new Promise((r) => setTimeout(r, 850));
         setCelebrate(false);
         setDirection(1);
         setSelectedId(null);
       } else setSelectedId(current.id);
+    } catch {
+      setError('Nie udało się zapisać odpowiedzi na telefonie. Spróbuj ponownie.');
     } finally {
       setBusy(false);
     }
@@ -101,6 +102,7 @@ export function CurrentActionScreen({ instructions, entries, onAnswer }: Props) 
 
   return (
     <div className="action">
+      {error && <p className="error-text" role="alert">{error}</p>}
       <div>
         <div className="progress-head">
           <span className="eyebrow">
@@ -174,7 +176,7 @@ export function CurrentActionScreen({ instructions, entries, onAnswer }: Props) 
             {outcome.olderVersionAcks.length > 0 && outcome.state === 'awaiting' && (
               <div className="callout callout-orange small">
                 <TriangleAlert size={18} />
-                <span>Prowadzący zmienił treść tej czynności. Twoja wcześniejsza odpowiedź dotyczyła starszej wersji — odpowiedz ponownie.</span>
+                <span>Prowadzący zmienił treść tej czynności. Twoja wcześniejsza odpowiedź dotyczyła starszej wersji - odpowiedz ponownie.</span>
               </div>
             )}
             {outcome.latest && latestEntry && (

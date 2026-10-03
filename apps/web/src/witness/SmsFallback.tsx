@@ -1,6 +1,6 @@
 // Awaryjny kanał SMS (sekcja 10). Link sms: otwiera systemową aplikację Wiadomości
 // z krótkim tekstem; wysyła sam świadek. Treść: identyfikator zdarzenia, krótka
-// odpowiedź, opcjonalne współrzędne — bez nazwiska i zbędnych danych medycznych.
+// odpowiedź, opcjonalne współrzędne - bez nazwiska i zbędnych danych medycznych.
 // Statusy: przygotowano / otwarto aplikację SMS / wysłano z telefonu /
 // odebrano przez centralę / przeczytano przez prowadzącego.
 // UI nie może twierdzić, że wiadomość dotarła, dopóki centrala tego nie potwierdzi.
@@ -61,7 +61,7 @@ export function SmsFallback({ entry, session, onChanged }: Props) {
   return (
     <>
       <p className="hint">
-        Telefon otworzy aplikację Wiadomości z gotowym tekstem. <strong>Wysyłasz sam.</strong> SMS to zwykła wiadomość — może dotrzeć z opóźnieniem albo
+        Telefon otworzy aplikację Wiadomości z gotowym tekstem. <strong>Wysyłasz sam.</strong> SMS to zwykła wiadomość - może dotrzeć z opóźnieniem albo
         wcale. Nie wpisuj nazwisk.
       </p>
       {session.sms.simulated && (

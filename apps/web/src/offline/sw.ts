@@ -1,5 +1,5 @@
 // Service Worker: cache interfejsu (precache z buildu) i nawigacja offline do index.html.
-// Żądania API nie są cache'owane — dane sesji i kolejka są w IndexedDB.
+// Żądania API nie są cache'owane - dane sesji i kolejka są w IndexedDB.
 import { cleanupOutdatedCaches, createHandlerBoundToURL, precacheAndRoute } from 'workbox-precaching';
 import { NavigationRoute, registerRoute } from 'workbox-routing';
 

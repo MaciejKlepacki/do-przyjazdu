@@ -38,7 +38,7 @@ export function usePolling<T>(fetcher: () => Promise<T>, intervalMs = POLL_INTER
   return { data, error, lastSuccessAt, refresh };
 }
 
-/** Bieżący czas odświeżany co `ms` — do etykiet „X min temu”. */
+/** Bieżący czas odświeżany co `ms` - do etykiet „X min temu”. */
 export function useNow(ms = 10_000): number {
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {

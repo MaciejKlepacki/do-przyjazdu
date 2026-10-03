@@ -1,5 +1,3 @@
-// Kilka jednoznacznych pytań ze scenariusza + krótka dodatkowa informacja.
-// Przy każdym pytaniu dostępne „nie wiem”. Formularz nie zmusza do diagnozy (sekcja 7).
 import type { MaybeKnown, ObservationAnswer, ObservationField } from '@do-przyjazdu/shared';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Check, PenLine, Send } from 'lucide-react';
@@ -21,6 +19,7 @@ export function ObservationForm({ fields, onSubmit, lastSaved }: Props) {
   const [freeText, setFreeText] = useState('');
   const [busy, setBusy] = useState(false);
   const [savedId, setSavedId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const set = (key: string, v: Value | null) => {
     haptic(6);
@@ -44,13 +43,17 @@ export function ObservationForm({ fields, onSubmit, lastSaved }: Props) {
   const pct = fields.length ? (answers.length / fields.length) * 100 : 0;
 
   const submit = async () => {
+    if (busy) return;
     setBusy(true);
+    setError(null);
     try {
       const entry = await onSubmit(answers, freeText.trim() || null);
       setSavedId(entry.entryId);
       setValues({});
       setFreeText('');
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch {
+      setError('Nie udało się zapisać obserwacji na telefonie. Twoje odpowiedzi są nadal w formularzu. Spróbuj ponownie.');
     } finally {
       setBusy(false);
     }
@@ -155,6 +158,7 @@ export function ObservationForm({ fields, onSubmit, lastSaved }: Props) {
         <textarea value={freeText} maxLength={500} rows={3} placeholder="Krótko, bez nazwisk" onChange={(e) => setFreeText(e.target.value)} />
       </label>
 
+      {error && <p className="error-text" role="alert">{error}</p>}
       <motion.button className="btn btn-xl btn-primary btn-block" whileTap={{ scale: 0.97 }} disabled={!canSubmit || busy} onClick={submit}>
         <Send size={20} /> Zapisz obserwację
       </motion.button>
