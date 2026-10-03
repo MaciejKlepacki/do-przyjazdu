@@ -124,7 +124,7 @@ export function DispatcherHome() {
                 icon={<MessageSquareWarning size={18} />}
                 tone="orange"
                 title="SMS-y do ręcznej weryfikacji"
-                sub="Bez rozpoznanego zdarzenia — nie są dopisywane automatycznie"
+                sub="Bez rozpoznanego zdarzenia - nie są dopisywane automatycznie"
                 aside={unassigned.data?.length ? <span className="count-bubble">{unassigned.data.length}</span> : undefined}
               />
               {unassigned.data?.length === 0 && <p className="all-clear">Brak wiadomości do sprawdzenia.</p>}

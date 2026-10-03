@@ -2,14 +2,14 @@
 // i czy czas pochodzi z urządzenia, czy z serwera (sekcja 10, reguła 3).
 
 export function formatTime(iso: string | null | undefined): string {
-  if (!iso) return '—';
+  if (!iso) return '-';
   const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return '—';
+  if (Number.isNaN(d.getTime())) return '-';
   return d.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 }
 
 export function formatDateTime(iso: string | null | undefined): string {
-  if (!iso) return '—';
+  if (!iso) return '-';
   const d = new Date(iso);
   return `${d.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit' })} ${formatTime(iso)}`;
 }

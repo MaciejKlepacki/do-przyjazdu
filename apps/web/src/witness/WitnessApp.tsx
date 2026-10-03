@@ -1,5 +1,3 @@
-// Telefon świadka: dołączenie przez link, bieżąca czynność, obserwacje, historia wpisów.
-// Każdy wpis najpierw trafia do IndexedDB, potem jest wysyłany; brak internetu nie blokuje zapisu.
 import type { AcknowledgementResult, Instruction, ObservationAnswer } from '@do-przyjazdu/shared';
 import { AnimatePresence, motion } from 'framer-motion';
 import { CheckCheck, ClipboardList, Eye, LoaderCircle, ShieldCheck, ShieldX, Smartphone, Wifi, WifiOff, ListChecks } from 'lucide-react';
@@ -10,7 +8,7 @@ import { Logo, plural, Sheet, Splash, spring, useRetained, useToast } from '../c
 import { formatTime } from '../lib/time';
 import { clearLocalSession, entriesFor, getSession, putSession, type LocalEntry, type StoredSession } from '../offline/db';
 import { enqueue, isPending, setSmsStatus } from '../offline/queue';
-import { syncNow } from '../offline/sync';
+import { syncNow, waitForSync } from '../offline/sync';
 import { ConnectionPill, ConnectivityDetails, type Connectivity } from './ConnectivityBar';
 import { CurrentActionScreen } from './CurrentActionScreen';
 import { EntryHistory } from './EntryHistory';
@@ -19,6 +17,7 @@ import { ObservationForm } from './ObservationForm';
 import { OfflineNotice } from './OfflineNotice';
 import { ReportChangeButton } from './ReportChangeButton';
 import { SmsFallback } from './SmsFallback';
+import { pauseWitnessTransport } from '../demo/transport';
 
 const SYNC_INTERVAL_MS = 5000;
 type Tab = 'action' | 'observe' | 'history';
@@ -28,8 +27,16 @@ const TABS: { id: Tab; label: string; icon: typeof Eye }[] = [
   { id: 'history', label: 'Moje wpisy', icon: ClipboardList },
 ];
 
-export function WitnessApp() {
-  const token = useParams().token ?? '';
+interface WitnessProps {
+  witnessToken?: string;
+  connectionPaused?: boolean;
+  embedded?: boolean;
+  onQueueChange?: (pendingIds: string[], receivedIds: string[]) => void;
+}
+
+export function WitnessApp({ witnessToken, connectionPaused = false, embedded = false, onQueueChange }: WitnessProps = {}) {
+  const params = useParams();
+  const token = witnessToken ?? params.token ?? '';
   const toast = useToast();
   const [stored, setStored] = useState<StoredSession | null | undefined>(undefined);
   const [entries, setEntries] = useState<LocalEntry[]>([]);
@@ -38,9 +45,16 @@ export function WitnessApp() {
   const [tab, setTab] = useState<Tab>('action');
   const [smsEntryId, setSmsEntryId] = useState<string | null>(null);
   const [cleared, setCleared] = useState(false);
+  const [syncError, setSyncError] = useState<string | null>(null);
   const mounted = useRef(true);
   const delivered = useRef<Set<string> | null>(null);
   const prevConn = useRef<Connectivity>('unknown');
+
+  useEffect(() => {
+    if (!embedded) return;
+    pauseWitnessTransport(token, connectionPaused);
+    return () => pauseWitnessTransport(token, false);
+  }, [token, connectionPaused, embedded]);
 
   const reload = useCallback(async () => {
     const [s, e] = await Promise.all([getSession(token), entriesFor(token)]);
@@ -50,22 +64,34 @@ export function WitnessApp() {
   }, [token]);
 
   const sync = useCallback(async () => {
-    const result = await syncNow(token);
     if (!mounted.current) return;
-    if (result.kind === 'ok') {
-      setConnectivity('online');
-      setDenied(null);
-    } else if (result.kind === 'offline') setConnectivity('offline');
-    else if (result.kind === 'denied') {
-      setConnectivity('online');
-      setDenied(result.message);
+    try {
+      const result = await syncNow(token, connectionPaused);
+      if (!mounted.current) return;
+      setSyncError(result.kind === 'error' ? result.message : null);
+      if (result.kind === 'ok') {
+        setConnectivity('online');
+        setDenied(null);
+      } else if (result.kind === 'offline') setConnectivity('offline');
+      else if (result.kind === 'denied') {
+        setConnectivity('online');
+        setDenied(result.message);
+      }
+      else setConnectivity('unknown');
+      await reload();
+    } catch {
+      if (mounted.current) setSyncError('Nie udało się odczytać pamięci telefonu. Sprawdź, czy przeglądarka pozwala tej stronie zapisywać dane.');
     }
-    await reload();
-  }, [token, reload]);
+  }, [token, reload, connectionPaused]);
 
   useEffect(() => {
+    onQueueChange?.(entries.filter(isPending).map(e => e.entryId), entries.filter(e => e.status === 'received-by-server').map(e => e.entryId));
+  }, [entries, onQueueChange]);
+
+  useEffect(() => {
+    if (cleared) return;
     mounted.current = true;
-    void reload().then(sync);
+    void sync();
     const timer = setInterval(() => void sync(), SYNC_INTERVAL_MS);
     const wake = () => void sync();
     const onVisible = () => document.visibilityState === 'visible' && wake();
@@ -80,9 +106,8 @@ export function WitnessApp() {
       window.removeEventListener('offline', onOffline);
       document.removeEventListener('visibilitychange', onVisible);
     };
-  }, [reload, sync]);
+  }, [sync, cleared]);
 
-  // „Dostarczono do centrali” — tylko dla wpisów, które dotarły w trakcie tej wizyty.
   useEffect(() => {
     const received = entries.filter((e) => e.status === 'received-by-server');
     if (delivered.current === null) {
@@ -101,7 +126,6 @@ export function WitnessApp() {
     });
   }, [entries, stored, toast]);
 
-  // Zmiana stanu połączenia — krótka informacja na górze.
   useEffect(() => {
     const prev = prevConn.current;
     prevConn.current = connectivity;
@@ -137,6 +161,12 @@ export function WitnessApp() {
     );
   }
 
+  if (syncError && !stored) return (
+    <Splash icon={<WifiOff size={34} />} tone="orange" title="Nie udało się pobrać zdarzenia">
+      <p>{syncError}</p>
+      <button className="btn btn-lg btn-primary" onClick={() => void sync()}>Spróbuj ponownie</button>
+    </Splash>
+  );
   if (stored === undefined) return <Splash title="Do przyjazdu" />;
 
   if (stored === null) {
@@ -193,7 +223,7 @@ export function WitnessApp() {
   const tabIndex = TABS.findIndex((t) => t.id === tab);
 
   return (
-    <motion.div className="w-app" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+    <motion.div className={`w-app${embedded ? ' w-embedded' : ''}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
       <DemoBanner visible={demo} />
       <header className="w-header">
         <div className="w-header-row">
@@ -229,6 +259,7 @@ export function WitnessApp() {
       </AnimatePresence>
 
       <main className="w-main">
+        {syncError && <div className="callout callout-orange" role="alert">{syncError} Wcześniej pobrane dane mogą być nieaktualne.</div>}
         <AnimatePresence mode="wait" initial={false}>
           <motion.div key={tab} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.2 }}>
             {tab === 'action' && (
@@ -253,8 +284,15 @@ export function WitnessApp() {
                 session={session}
                 onSms={(e) => void openSms(e)}
                 onClear={async () => {
-                  await clearLocalSession(token);
-                  setCleared(true);
+                  mounted.current = false;
+                  try {
+                    await waitForSync(token).catch(() => undefined);
+                    await clearLocalSession(token);
+                    setCleared(true);
+                  } catch (error) {
+                    mounted.current = true;
+                    throw error;
+                  }
                 }}
               />
             )}

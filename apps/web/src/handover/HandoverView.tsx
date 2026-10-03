@@ -144,7 +144,7 @@ export function HandoverView() {
 
       {report.error && (
         <div className="callout callout-red" style={{ marginBottom: '1rem' }}>
-          <ServerCrash size={18} /> Brak połączenia z serwerem — dane mogą być nieaktualne.
+          <ServerCrash size={18} /> Brak połączenia z serwerem - dane mogą być nieaktualne.
         </div>
       )}
 
@@ -158,7 +158,7 @@ export function HandoverView() {
                   <li key={s.entryId}>
                     <Siren size={17} />
                     <span>
-                      <strong>Zmiana sytuacji ({formatTime(s.times.receivedTime)}):</strong> <span className="quote">{s.text}</span> — nieobsłużone
+                      <strong>Zmiana sytuacji ({formatTime(s.times.receivedTime)}):</strong> <span className="quote">{s.text}</span> - nieobsłużone
                     </span>
                   </li>
                 ))}
@@ -175,7 +175,7 @@ export function HandoverView() {
                         {a.comment && (
                           <>
                             {' '}
-                            — <span className="quote">{a.comment}</span>
+                            - <span className="quote">{a.comment}</span>
                           </>
                         )}
                       </span>
@@ -295,7 +295,7 @@ export function HandoverView() {
                   <li key={g.from} className={g.ongoing ? 'is-ongoing' : ''}>
                     <Unplug size={16} />
                     <span className="mono small">
-                      {formatTime(g.from)} – {g.to ? formatTime(g.to) : 'trwa'}
+                      {formatTime(g.from)} - {g.to ? formatTime(g.to) : 'trwa'}
                     </span>
                     <span className="spacer" />
                     <strong>{formatDuration(g.from, g.to)}</strong>

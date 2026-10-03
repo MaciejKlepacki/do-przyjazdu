@@ -1,5 +1,3 @@
-// IndexedDB: pobrana sesja, zatwierdzone instrukcje, lokalne obserwacje, kolejka wpisów (sekcja 10).
-// Zapisujemy też czas pobrania instrukcji, żeby pokazać, jak stara jest treść.
 import type {
   AcknowledgementPayload,
   ObservationPayload,
@@ -10,7 +8,6 @@ import type {
 import { openDB, type DBSchema, type IDBPDatabase } from 'idb';
 import { uuid } from '../lib/uuid';
 
-/** Stan wysyłki przez internet. SMS ma osobny stan — nie zastępuje wpisu (reguła 8). */
 export type LocalEntryStatus = 'queued' | 'sending' | 'received-by-server' | 'rejected';
 
 interface LocalEntryBase {
@@ -33,11 +30,11 @@ export type LocalEntry =
 export interface StoredSession {
   token: string;
   session: WitnessSessionResponse;
-  /** Kiedy ostatnio pobrano stan sesji i instrukcje. */
+
   fetchedAt: string;
   joinedAt: string | null;
   lastSyncAt: string | null;
-  /** Ustawione, gdy serwer odmówił dostępu (link unieważniony lub wygasł). */
+
   accessDenied: { code: string; message: string; at: string } | null;
 }
 
@@ -60,13 +57,13 @@ export function localDb(): Promise<IDBPDatabase<Schema>> {
   return dbPromise;
 }
 
-/** Stały identyfikator tego urządzenia i licznik kolejności wpisów (reguła 1). */
 export async function deviceId(): Promise<string> {
   const db = await localDb();
-  const existing = await db.get('meta', 'deviceId');
-  if (existing) return String(existing.value);
-  const id = `dev-${uuid()}`;
-  await db.put('meta', { key: 'deviceId', value: id });
+  const tx = db.transaction('meta', 'readwrite');
+  const existing = await tx.store.get('deviceId');
+  const id = existing ? String(existing.value) : `dev-${uuid()}`;
+  if (!existing) await tx.store.put({ key: 'deviceId', value: id });
+  await tx.done;
   return id;
 }
 
@@ -96,7 +93,6 @@ export async function putEntry(e: LocalEntry): Promise<void> {
   await (await localDb()).put('entries', e);
 }
 
-/** Zakończenie demo: usunięcie lokalnej sesji i wpisów z telefonu (sekcja 10). */
 export async function clearLocalSession(token: string): Promise<void> {
   const db = await localDb();
   const tx = db.transaction(['sessions', 'entries'], 'readwrite');

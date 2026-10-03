@@ -126,7 +126,7 @@ export function IncidentPanel() {
         <div className="callout callout-red" style={{ marginBottom: '1rem' }}>
           <ServerCrash size={18} />
           <span>
-            Brak połączenia z serwerem ({panel.error}). Dane poniżej mogą być nieaktualne — <StalenessLabel prefix="pobrano" at={panel.lastSuccessAt} />.
+            Brak połączenia z serwerem ({panel.error}). Dane poniżej mogą być nieaktualne - <StalenessLabel prefix="pobrano" at={panel.lastSuccessAt} />.
           </span>
         </div>
       )}

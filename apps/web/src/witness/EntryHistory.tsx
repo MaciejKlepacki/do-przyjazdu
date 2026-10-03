@@ -1,9 +1,8 @@
-// Lokalna historia wpisów z ich stanem wysyłki. Wpisy nie znikają po synchronizacji.
 import type { ObservationField, WitnessSessionResponse } from '@do-przyjazdu/shared';
 import { AnimatePresence, motion } from 'framer-motion';
 import { CircleCheck, Eye, Inbox, MessageSquare, Siren, Trash } from 'lucide-react';
 import { useState } from 'react';
-import { CardHead, EmptyState, softSpring } from '../components/ui';
+import { CardHead, EmptyState, plural, softSpring } from '../components/ui';
 import { ACK_LABEL, answerText } from '../lib/labels';
 import { formatTime } from '../lib/time';
 import type { LocalEntry } from '../offline/db';
@@ -21,7 +20,7 @@ function describe(entry: LocalEntry, session: WitnessSessionResponse, fields: Ma
   if (entry.kind === 'acknowledgement') {
     const ins = session.instructions.find((i) => i.id === entry.payload.instructionId);
     const label = ins ? ins.text.slice(0, 70) + (ins.text.length > 70 ? '…' : '') : 'czynność';
-    return `${ACK_LABEL[entry.payload.result]} — „${label}” (v${entry.payload.instructionVersion})${entry.payload.comment ? ` · ${entry.payload.comment}` : ''}`;
+    return `${ACK_LABEL[entry.payload.result]} - „${label}” (v${entry.payload.instructionVersion})${entry.payload.comment ? ` · ${entry.payload.comment}` : ''}`;
   }
   const parts = entry.payload.answers.map((a) => `${fields.get(a.fieldKey)?.label ?? a.fieldKey} ${answerText(fields.get(a.fieldKey), a.value)}`);
   if (entry.payload.freeText) parts.push(`„${entry.payload.freeText}”`);
@@ -37,6 +36,16 @@ interface Props {
 
 export function EntryHistory({ entries, session, onSms, onClear }: Props) {
   const [confirming, setConfirming] = useState(false);
+  const [clearing, setClearing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const clear = async () => {
+    if (clearing) return;
+    setClearing(true);
+    setError(null);
+    try { await onClear(); }
+    catch { setError('Nie udało się wyczyścić pamięci telefonu. Spróbuj ponownie.'); }
+    finally { setClearing(false); }
+  };
   const fields = new Map(session.fields.map((f) => [f.key, f]));
   const pending = entries.filter(isPending).length;
   const delivered = entries.filter((e) => e.status === 'received-by-server').length;
@@ -89,15 +98,15 @@ export function EntryHistory({ entries, session, onSms, onClear }: Props) {
         <CardHead icon={<Trash size={17} />} tone="red" title="Koniec zdarzenia" sub="Usuwa sesję i wpisy z tego telefonu. Dane wysłane do centrali zostają u prowadzącego." />
         {pending > 0 && (
           <p className="small text-orange strong" style={{ marginBottom: '0.7rem' }}>
-            Uwaga: {pending} wpisów nie dotarło jeszcze do centrali.
+            Uwaga: {pending} {plural(pending, 'wpis nie dotarł', 'wpisy nie dotarły', 'wpisów nie dotarło')} jeszcze do centrali.
           </p>
         )}
         {confirming ? (
           <div className="row">
-            <button className="btn btn-danger" onClick={() => void onClear()}>
-              Tak, wyczyść dane
+            <button className="btn btn-danger" disabled={clearing} onClick={() => void clear()}>
+              {clearing ? 'Czyszczenie…' : 'Tak, wyczyść dane'}
             </button>
-            <button className="btn" onClick={() => setConfirming(false)}>
+            <button className="btn" disabled={clearing} onClick={() => setConfirming(false)}>
               Anuluj
             </button>
           </div>
@@ -106,6 +115,7 @@ export function EntryHistory({ entries, session, onSms, onClear }: Props) {
             Wyczyść dane z telefonu
           </button>
         )}
+        {error && <p className="error-text" role="alert">{error}</p>}
       </section>
     </div>
   );

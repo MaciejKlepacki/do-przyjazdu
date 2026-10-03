@@ -6,7 +6,7 @@ import { deviceId, nextSequence, putEntry, type LocalEntry } from './db';
 
 type NewEntry = Pick<LocalEntry, 'kind' | 'payload'> & Pick<WitnessEnvelope, 'kind' | 'payload'>;
 
-/** Zapis na urządzeniu — zawsze najpierw lokalnie, wysyłka osobno. */
+/** Zapis na urządzeniu - zawsze najpierw lokalnie, wysyłka osobno. */
 export async function enqueue(token: string, entry: NewEntry): Promise<LocalEntry> {
   const local = {
     ...entry,

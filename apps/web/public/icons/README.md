@@ -1,1 +1,9 @@
-Ikony PWA generowane skryptem `node scripts/generate-icons.mjs` (z katalogu głównego repo).
+# Icons
+
+The continuity symbol connects two points with one line. Source: `../brand-symbol.svg`.
+
+Regenerate the PWA icons from the repository root:
+
+```bash
+node scripts/generate-icons.mjs
+```

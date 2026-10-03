@@ -6,7 +6,7 @@ import { ArrowRight, ListChecks, PhoneCall, WifiOff } from 'lucide-react';
 import { haptic, Logo, softSpring } from '../components/ui';
 
 const FEATURES = [
-  { icon: <ListChecks size={20} />, tone: 'blue', title: 'Polecenia od prowadzącego', text: 'Widzisz tylko instrukcje zatwierdzone przez dyspozytora — po jednej, dużym tekstem.' },
+  { icon: <ListChecks size={20} />, tone: 'blue', title: 'Polecenia od prowadzącego', text: 'Widzisz tylko instrukcje zatwierdzone przez dyspozytora - po jednej, dużym tekstem.' },
   { icon: <WifiOff size={20} />, tone: 'green', title: 'Działa bez zasięgu', text: 'Odpowiedzi zapisują się na telefonie i wysyłają, gdy wróci internet.' },
   { icon: <PhoneCall size={20} />, tone: 'red', title: 'Nie zastępuje rozmowy', text: 'Jeśli możesz dzwonić, rozmawiaj z prowadzącym. Ta strona nie wzywa pomocy.' },
 ];

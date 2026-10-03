@@ -1,5 +1,5 @@
 // Link dla świadka: losowy token, ważny dla jednej sesji, możliwy do unieważnienia.
-// Token widać tylko raz — w bazie zostaje skrót.
+// Token widać tylko raz - w bazie zostaje skrót.
 import type { WitnessLinkCreated, WitnessLinkInfo } from '@do-przyjazdu/shared';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Check, Copy, EyeOff, Link2, QrCode } from 'lucide-react';

@@ -1,4 +1,4 @@
-// Sesja panelu. Sam adres panelu nie daje uprawnień — backend sprawdza każde żądanie.
+// Sesja panelu. Sam adres panelu nie daje uprawnień - backend sprawdza każde żądanie.
 import type { MeResponse } from '@do-przyjazdu/shared';
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
 import { ServerCrash } from 'lucide-react';

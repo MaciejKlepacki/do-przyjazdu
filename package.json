@@ -12,11 +12,12 @@
     "dev:api": "npm run dev --workspace=apps/api",
     "dev:web": "npm run dev --workspace=apps/web",
     "build": "npm run build --workspaces --if-present",
-    "typecheck": "npm run typecheck --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present && tsc --noEmit --target ES2022 --module ESNext --moduleResolution bundler --strict --skipLibCheck scripts/demo.mts apps/api/src/types.d.ts",
     "test": "npm run test --workspaces --if-present",
     "db:migrate": "npm run db:migrate --workspace=apps/api",
     "db:seed": "npm run db:seed --workspace=apps/api",
     "demo:reset": "npm run demo:reset --workspace=apps/api",
+    "demo": "node --import tsx scripts/demo.mts",
     "start": "npm run start --workspace=apps/api"
   },
   "engines": {
