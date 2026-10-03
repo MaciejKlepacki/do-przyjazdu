@@ -61,3 +61,8 @@ export function answerText(field: ObservationField | undefined, value: MaybeKnow
   if (Array.isArray(value.value)) return value.value.map(label).join(', ') || '—';
   return typeof value.value === 'number' ? `${value.value}${field?.unit ? ' ' + field.unit : ''}` : label(value.value);
 }
+
+export const ROLE_LABEL: Record<'dispatcher' | 'responder', string> = {
+  dispatcher: 'Dyspozytor',
+  responder: 'Ratownik',
+};

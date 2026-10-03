@@ -1,7 +1,10 @@
 // Kilka jednoznacznych pytań ze scenariusza + krótka dodatkowa informacja.
 // Przy każdym pytaniu dostępne „nie wiem”. Formularz nie zmusza do diagnozy (sekcja 7).
 import type { MaybeKnown, ObservationAnswer, ObservationField } from '@do-przyjazdu/shared';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Check, PenLine, Send } from 'lucide-react';
 import { useState } from 'react';
+import { haptic, softSpring } from '../components/ui';
 import type { LocalEntry } from '../offline/db';
 import { EntryStatus } from './entryStatus';
 
@@ -19,13 +22,15 @@ export function ObservationForm({ fields, onSubmit, lastSaved }: Props) {
   const [busy, setBusy] = useState(false);
   const [savedId, setSavedId] = useState<string | null>(null);
 
-  const set = (key: string, v: Value | null) =>
+  const set = (key: string, v: Value | null) => {
+    haptic(6);
     setValues((prev) => {
       const next = { ...prev };
       if (v === null) delete next[key];
       else next[key] = v;
       return next;
     });
+  };
 
   const toggleMulti = (field: ObservationField, option: string) => {
     const current = values[field.key];
@@ -36,6 +41,7 @@ export function ObservationForm({ fields, onSubmit, lastSaved }: Props) {
 
   const answers: ObservationAnswer[] = Object.entries(values).map(([fieldKey, value]) => ({ fieldKey, value }));
   const canSubmit = answers.length > 0 || freeText.trim().length > 0;
+  const pct = fields.length ? (answers.length / fields.length) * 100 : 0;
 
   const submit = async () => {
     setBusy(true);
@@ -51,66 +57,107 @@ export function ObservationForm({ fields, onSubmit, lastSaved }: Props) {
   };
 
   return (
-    <div className="obs-form">
-      {savedId && lastSaved?.entryId === savedId && (
-        <div className="notice notice-ok">
-          Obserwacja zapisana. <EntryStatus entry={lastSaved} />
+    <div className="obs">
+      <header className="obs-intro">
+        <h2 className="title-lg">Co widzisz?</h2>
+        <p>Odpowiadaj tylko na to, co widzisz. Możesz pominąć pytanie albo wybrać „Nie wiem”.</p>
+        <div className="meter" aria-label={`Odpowiedziano ${answers.length} z ${fields.length}`}>
+          <span className="meter-track">
+            <motion.span className="meter-bar" initial={false} animate={{ width: `${pct}%` }} transition={softSpring} />
+          </span>
+          {answers.length}/{fields.length}
         </div>
-      )}
-      <p className="muted">Odpowiadaj tylko na to, co widzisz. Możesz pominąć pytanie albo wybrać „nie wiem”.</p>
-      {fields.map((field) => {
+      </header>
+
+      <AnimatePresence>
+        {savedId && lastSaved?.entryId === savedId && (
+          <motion.div className="callout callout-green" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0 }}>
+            <Check size={18} strokeWidth={3} />
+            <div className="stack-sm">
+              <strong>Obserwacja zapisana</strong>
+              <div>
+                <EntryStatus entry={lastSaved} />
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {fields.map((field, n) => {
         const v = values[field.key];
         const unknown = v && !v.known;
+        const labelId = `q-${field.key}`;
         return (
-          <fieldset key={field.key} className="obs-field">
-            <legend>{field.label}</legend>
-            <div className="options">
+          <motion.div
+            key={field.key}
+            role="group"
+            aria-labelledby={labelId}
+            className={v ? 'q-card is-answered' : 'q-card'}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ ...softSpring, delay: Math.min(n * 0.04, 0.3) }}
+          >
+            <div className="q-title" id={labelId}>
+              <span className="q-num">{v ? <Check size={14} strokeWidth={3} /> : n + 1}</span>
+              {field.label}
+            </div>
+            <div className="chips">
               {field.options?.map((o) => {
-                const selected = v?.known && (Array.isArray(v.value) ? v.value.includes(o.value) : v.value === o.value);
+                const selected = Boolean(v?.known && (Array.isArray(v.value) ? v.value.includes(o.value) : v.value === o.value));
                 return (
-                  <button
+                  <motion.button
                     key={o.value}
                     type="button"
-                    aria-pressed={Boolean(selected)}
-                    className={selected ? 'option selected' : 'option'}
-                    onClick={() =>
-                      field.kind === 'multi-choice'
-                        ? toggleMulti(field, o.value)
-                        : set(field.key, selected ? null : { known: true, value: o.value })
-                    }
+                    layout
+                    whileTap={{ scale: 0.94 }}
+                    aria-pressed={selected}
+                    className={selected ? 'chip-opt is-on' : 'chip-opt'}
+                    onClick={() => (field.kind === 'multi-choice' ? toggleMulti(field, o.value) : set(field.key, selected ? null : { known: true, value: o.value }))}
                   >
+                    {selected && <Check size={15} strokeWidth={3} />}
                     {o.label}
-                  </button>
+                  </motion.button>
                 );
               })}
               {(field.kind === 'short-text' || field.kind === 'number') && (
                 <input
                   type={field.kind === 'number' ? 'number' : 'text'}
+                  inputMode={field.kind === 'number' ? 'numeric' : undefined}
+                  placeholder={field.unit ? `wpisz (${field.unit})` : 'wpisz'}
                   value={v?.known ? String(v.value) : ''}
                   onChange={(e) =>
                     set(field.key, e.target.value === '' ? null : { known: true, value: field.kind === 'number' ? Number(e.target.value) : e.target.value })
                   }
                 />
               )}
-              <button
+              <motion.button
                 type="button"
+                layout
+                whileTap={{ scale: 0.94 }}
                 aria-pressed={Boolean(unknown)}
-                className={unknown ? 'option option-unknown selected' : 'option option-unknown'}
+                className={unknown ? 'chip-opt chip-unknown is-on' : 'chip-opt chip-unknown'}
                 onClick={() => set(field.key, unknown ? null : { known: false, reason: 'unknown' })}
               >
                 Nie wiem
-              </button>
+              </motion.button>
             </div>
-          </fieldset>
+          </motion.div>
         );
       })}
-      <label className="field-label">
-        Coś jeszcze? (krótko, bez nazwisk)
-        <textarea value={freeText} maxLength={500} rows={3} onChange={(e) => setFreeText(e.target.value)} />
+
+      <label className={freeText.trim() ? 'q-card is-answered' : 'q-card'}>
+        <span className="q-title">
+          <span className="q-num">
+            <PenLine size={14} />
+          </span>
+          Coś jeszcze?
+        </span>
+        <textarea value={freeText} maxLength={500} rows={3} placeholder="Krótko, bez nazwisk" onChange={(e) => setFreeText(e.target.value)} />
       </label>
-      <button className="btn btn-primary btn-large" disabled={!canSubmit || busy} onClick={submit}>
-        Zapisz obserwację
-      </button>
+
+      <motion.button className="btn btn-xl btn-primary btn-block" whileTap={{ scale: 0.97 }} disabled={!canSubmit || busy} onClick={submit}>
+        <Send size={20} /> Zapisz obserwację
+      </motion.button>
     </div>
   );
 }

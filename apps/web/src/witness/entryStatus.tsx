@@ -1,4 +1,5 @@
 import type { SmsFallbackStatus, WitnessSessionResponse } from '@do-przyjazdu/shared';
+import { CheckCheck, CircleX, Clock3, LoaderCircle, MessageSquare } from 'lucide-react';
 import { SMS_STATUS_LABEL } from '../lib/labels';
 import { formatTime } from '../lib/time';
 import type { LocalEntry } from '../offline/db';
@@ -7,13 +8,29 @@ import type { LocalEntry } from '../offline/db';
 export function EntryStatus({ entry }: { entry: LocalEntry }) {
   switch (entry.status) {
     case 'queued':
-      return <span className="chip chip-warn">Zapisano na telefonie · czeka na wysłanie</span>;
+      return (
+        <span className="badge badge-orange">
+          <Clock3 size={13} /> Zapisano na telefonie · czeka na wysłanie
+        </span>
+      );
     case 'sending':
-      return <span className="chip chip-warn">Wysyłanie…</span>;
+      return (
+        <span className="badge badge-orange">
+          <LoaderCircle size={13} className="spin" /> Wysyłanie…
+        </span>
+      );
     case 'received-by-server':
-      return <span className="chip chip-ok">Otrzymano w centrali {formatTime(entry.receivedTime)}</span>;
+      return (
+        <span className="badge badge-green">
+          <CheckCheck size={14} /> Otrzymano w centrali {formatTime(entry.receivedTime)}
+        </span>
+      );
     case 'rejected':
-      return <span className="chip chip-bad">Nie przyjęto: {entry.error}</span>;
+      return (
+        <span className="badge badge-red">
+          <CircleX size={13} /> Nie przyjęto: {entry.error}
+        </span>
+      );
   }
 }
 
@@ -28,5 +45,9 @@ export function SmsStatus({ entry, session }: { entry: LocalEntry; session: Witn
   const status = smsStatusFor(entry, session);
   if (!status) return null;
   const confirmed = status === 'received-by-center' || status === 'read-by-lead';
-  return <span className={confirmed ? 'chip chip-ok' : 'chip'}>SMS: {SMS_STATUS_LABEL[status]}</span>;
+  return (
+    <span className={confirmed ? 'badge badge-green' : 'badge'}>
+      <MessageSquare size={13} /> SMS: {SMS_STATUS_LABEL[status]}
+    </span>
+  );
 }

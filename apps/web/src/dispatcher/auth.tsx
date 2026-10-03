@@ -1,6 +1,8 @@
 // Sesja panelu. Sam adres panelu nie daje uprawnień — backend sprawdza każde żądanie.
 import type { MeResponse } from '@do-przyjazdu/shared';
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
+import { ServerCrash } from 'lucide-react';
+import { Splash } from '../components/ui';
 import { api, ApiError } from '../lib/api';
 import { LoginScreen } from './LoginScreen';
 
@@ -35,15 +37,15 @@ export function RequireStaff({ children }: { children: ReactNode }) {
 
   if (error && me === undefined) {
     return (
-      <div className="page centered">
+      <Splash icon={<ServerCrash size={34} />} tone="red" title="Brak połączenia">
         <p>{error}</p>
-        <button className="btn" onClick={() => void load()}>
+        <button className="btn btn-lg btn-primary" onClick={() => void load()}>
           Spróbuj ponownie
         </button>
-      </div>
+      </Splash>
     );
   }
-  if (me === undefined) return <div className="page centered">Ładowanie…</div>;
+  if (me === undefined) return <Splash title="Do przyjazdu" />;
   if (me === null) return <LoginScreen onLogin={setMe} />;
 
   const logout = async () => {

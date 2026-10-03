@@ -1,7 +1,10 @@
 // Wpis wyposażenia i dostawy pakietu (np. dronem) z identyfikatorem pakietu.
 // Prototyp nie komunikuje się z dronem — dostawę wpisuje dyspozytor (sekcja 12).
 import type { EquipmentItem, StaffUser } from '@do-przyjazdu/shared';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Package, Plus } from 'lucide-react';
 import { useState } from 'react';
+import { softSpring } from '../components/ui';
 import { api, errorMessage } from '../lib/api';
 import { EQUIPMENT_STATE_LABEL } from '../lib/labels';
 import { formatTime } from '../lib/time';
@@ -24,24 +27,31 @@ export function EquipmentEntry({ incidentId, equipment, staff, canManage, onChan
   return (
     <div>
       {equipment.length === 0 ? (
-        <p className="muted">Brak wpisów.</p>
+        <p className="hint">Brak wpisów. Dodaj, co jest na miejscu albo co dostarczono.</p>
       ) : (
-        <ul className="equipment">
-          {equipment.map((e) => (
-            <li key={e.id}>
-              <strong>{e.name}</strong> — {EQUIPMENT_STATE_LABEL[e.state]}
-              {e.packageId && <span className="chip chip-info">{e.packageId}</span>}
-              <span className="muted small">
-                {' '}
-                · {formatTime(e.times.receivedTime)} · {who(e)}
-              </span>
-            </li>
-          ))}
+        <ul className="equip-list">
+          <AnimatePresence initial={false}>
+            {equipment.map((e) => (
+              <motion.li key={e.id} layout className="equip" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={softSpring}>
+                <span className="equip-icon">
+                  <Package size={17} />
+                </span>
+                <div className="equip-body">
+                  <strong>{e.name}</strong>
+                  <span>
+                    {formatTime(e.times.receivedTime)} · {who(e)}
+                  </span>
+                </div>
+                {e.packageId && <span className="badge badge-indigo">{e.packageId}</span>}
+                <span className={`badge ${e.state === 'unavailable' ? 'badge-red' : 'badge-green'}`}>{EQUIPMENT_STATE_LABEL[e.state]}</span>
+              </motion.li>
+            ))}
+          </AnimatePresence>
         </ul>
       )}
       {canManage && (
-        <div className="row wrap">
-          <input className="grow" placeholder="np. Pakiet z drona: folia NRC, ogrzewacz" value={name} onChange={(e) => setName(e.target.value)} />
+        <div className="inline-form">
+          <input placeholder="np. Pakiet z drona: folia NRC, ogrzewacz" value={name} onChange={(e) => setName(e.target.value)} />
           <select value={state} onChange={(e) => setState(e.target.value as EquipmentItem['state'])}>
             {Object.entries(EQUIPMENT_STATE_LABEL).map(([k, v]) => (
               <option key={k} value={k}>
@@ -49,9 +59,9 @@ export function EquipmentEntry({ incidentId, equipment, staff, canManage, onChan
               </option>
             ))}
           </select>
-          <input className="short" placeholder="ID pakietu" value={packageId} onChange={(e) => setPackageId(e.target.value)} />
+          <input style={{ flex: '0 1 9rem' }} placeholder="ID pakietu" value={packageId} onChange={(e) => setPackageId(e.target.value)} />
           <button
-            className="btn btn-small"
+            className="btn btn-tint-blue"
             disabled={!name.trim()}
             onClick={async () => {
               try {
@@ -63,11 +73,11 @@ export function EquipmentEntry({ incidentId, equipment, staff, canManage, onChan
               }
             }}
           >
-            Zapisz
+            <Plus size={16} /> Zapisz
           </button>
         </div>
       )}
-      {error && <p className="error">{error}</p>}
+      {error && <p className="error-text">{error}</p>}
     </div>
   );
 }

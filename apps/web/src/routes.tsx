@@ -3,6 +3,8 @@
 // /dispatcher/:id      prowadzenie zdarzenia
 // /handover/:id        widok przekazania dla ratownika
 import { createBrowserRouter, Link, Navigate } from 'react-router-dom';
+import { Compass } from 'lucide-react';
+import { Splash } from './components/ui';
 import { RequireStaff } from './dispatcher/auth';
 import { DispatcherHome } from './dispatcher/DispatcherHome';
 import { IncidentPanel } from './dispatcher/IncidentPanel';
@@ -11,10 +13,12 @@ import { WitnessApp } from './witness/WitnessApp';
 
 function NotFound() {
   return (
-    <div className="page centered">
-      <h1>Nie ma takiej strony</h1>
-      <p>Świadek otwiera link otrzymany od prowadzącego. Panel: <Link to="/dispatcher">/dispatcher</Link>.</p>
-    </div>
+    <Splash icon={<Compass size={34} />} tone="orange" title="Nie ma takiej strony">
+      <p>Świadek otwiera link otrzymany od prowadzącego.</p>
+      <Link to="/dispatcher" className="btn btn-primary">
+        Przejdź do panelu
+      </Link>
+    </Splash>
   );
 }
 
