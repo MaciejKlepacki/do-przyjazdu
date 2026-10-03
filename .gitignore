@@ -1,0 +1,21 @@
+node_modules/
+dist/
+build/
+coverage/
+*.log
+
+# baza demo i pliki lokalne
+*.sqlite
+*.sqlite-journal
+*.sqlite-wal
+*.sqlite-shm
+data/
+
+# środowisko
+.env
+.env.local
+.env.*.local
+
+.DS_Store
+.vite/
+.turbo/
