@@ -45,10 +45,11 @@ export function LoginScreen({ onLogin }: { onLogin: (me: MeResponse) => void }) 
       <div className="login-shell">
         <aside className="login-visual">
           <svg className="scene" viewBox="0 0 800 1000" preserveAspectRatio="xMidYMid slice" aria-hidden>
-            <rect width="800" height="1000" fill="#192e28" />
-            <path d="M80 190h330c200 0 90 300 250 300h100" fill="none" stroke="#a2b395" strokeWidth="3" opacity=".4" />
-            <circle cx="80" cy="190" r="12" fill="#ed8756" />
-            <circle cx="740" cy="490" r="12" fill="#fffef8" />
+            <rect width="800" height="1000" fill="#18243a" />
+            <path d="M0 190h800M0 490h800M80 0v1000M740 0v1000" fill="none" stroke="#34435a" strokeWidth="1" />
+            <path d="M80 190h330c200 0 90 300 250 300h100" fill="none" stroke="#d5e8a1" strokeWidth="6" />
+            <circle cx="80" cy="190" r="12" fill="#d5e8a1" />
+            <circle cx="740" cy="490" r="12" fill="#f7f9fc" />
           </svg>
           <motion.div className="login-copy" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...softSpring, delay: 0.1 }}>
             <Logo size={58} />

@@ -1,3 +1,5 @@
+![Do przyjazdu. Pomoc jest w drodze. Kontakt zostaje.](docs/assets/readme-banner.png)
+
 # Do przyjazdu
 
 A HackYeah 2026 prototype for the time between calling for help and a responder arriving. A witness follows dispatcher-approved instructions, records observations and hands over the incident history.
@@ -40,10 +42,15 @@ For development, `npm run dev` starts the API on port 3000 and Vite on 5173. Run
 
 Checks: `npm run typecheck`, `npm test`, `npm run build`. No lint command is configured.
 
-Presentation steps: [docs/scenariusz-demo.md](docs/scenariusz-demo.md). Full project guide: [docs/przewodnik-projektu.md](docs/przewodnik-projektu.md). Scope and decisions: [DO_PRZYJAZDU.md](DO_PRZYJAZDU.md).
+Presentation materials:
+
+- [Live demo walkthrough](docs/scenariusz-demo.md).
+- [Narrated demo video script, about 2:30](docs/scenariusz-filmu-demo.md).
+- [Full project guide](docs/przewodnik-projektu.md).
+- [Scope and decisions](DO_PRZYJAZDU.md).
 
 ## Data and credits
 
 All demo incidents are fictional. Scenario content in `apps/api/src/scenario/demoScenario.ts` is provisional and must be reviewed by the team's physician. This prototype does not call emergency services or integrate with TOPR. SMS delivery is not implemented in the local demo.
 
-Built with React, Vite, Express and SQLite. Icons use Lucide. The brand symbol is in `apps/web/public/brand-symbol.svg`; PWA icons can be regenerated with `node scripts/generate-icons.mjs`.
+Built with React, Vite, Express and SQLite. Icons use Lucide; the interface uses the bundled Inter font. The brand symbol is in `apps/web/public/brand-symbol.svg`, and the repository banner is in `docs/assets/readme-banner.svg`. PWA icons can be regenerated with `node scripts/generate-icons.mjs`.

@@ -30,10 +30,9 @@ export function plural(n: number, one: string, few: string, many: string): strin
 export function Logo({ size = 32 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 64 64" aria-hidden className="logo">
-      <rect width="64" height="64" rx="12" fill="#192e28" />
-      <path d="M16 40h9c10 0 4-16 15-16h8" stroke="#fffef8" strokeWidth="5" strokeLinecap="round" fill="none" />
-      <circle cx="16" cy="40" r="5" fill="#ed8756" />
-      <circle cx="48" cy="24" r="5" fill="#fffef8" />
+      <rect width="64" height="64" rx="14" fill="#18243a" />
+      <path d="M28 14v25a10 10 0 1 1-10-10h10" stroke="#f7f9fc" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+      <path d="M36 50V25a10 10 0 1 1 10 10H36" stroke="#d5e8a1" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" fill="none" />
     </svg>
   );
 }
@@ -68,7 +67,7 @@ export function ProgressRing({ value, size = 44, stroke = 5, label }: { value: n
   );
 }
 
-const AVATAR_COLORS = ['#224d3e', '#48665d', '#755540', '#456347', '#5b6750'];
+const AVATAR_COLORS = ['#334f80', '#52677a', '#726348', '#3e7169', '#666a83'];
 
 export function Avatar({ name, size = 34 }: { name: string; size?: number }) {
   const initials = name

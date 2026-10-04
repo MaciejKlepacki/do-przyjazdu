@@ -1,6 +1,6 @@
 # Przewodnik po Do przyjazdu
 
-Stan opisany 3 października 2026. Przewodnik dotyczy kodu tego repozytorium i lokalnego demo, a nie wdrożonego systemu ratunkowego.
+Stan opisany 4 października 2026. Przewodnik dotyczy kodu tego repozytorium i lokalnego demo, a nie wdrożonego systemu ratunkowego.
 
 ## 1. Co właściwie budujemy
 
@@ -24,7 +24,9 @@ Nazwa pozostaje „Do przyjazdu”. Jest zrozumiała po polsku i wskazuje konkre
 
 Hasło: „Pomoc jest w drodze. Kontakt zostaje”. Kontakt oznacza ciągłość współpracy i zachowaną historię. Nie oznacza stałego połączenia z centralą bez internetu. Na stronie wyjaśniamy tę granicę.
 
-Znak to linia łącząca dwa punkty. Pomarańczowy punkt oznacza początek na miejscu zdarzenia, jasny punkt przekazanie dalej. Ciemna zieleń, jasne tło i pomarańczowy akcent tworzą wspólną identyfikację strony, panelu i PWA. Plik wektorowy: `apps/web/public/brand-symbol.svg`.
+Znak to monogram „dp” z dwóch obróconych względem siebie fragmentów. Nawiązuje do nazwy i przekazania informacji między osobami. Atramentowy granat, jasne tło i przygaszony limonkowy akcent tworzą wspólną identyfikację strony, panelu i PWA. Kolory statusów nadal rozróżniają wynik czynności, ostrzeżenie i problem. Plik wektorowy: `apps/web/public/brand-symbol.svg`. Baner repozytorium: `docs/assets/readme-banner.svg` i jego eksport PNG.
+
+Hasło na stronie jest złożone w dwie frazy, z wyraźną różnicą grubości pisma. Wejście pokazuje rysowanie linii przepływu między osobami. W demo liczniki i etapy animują się po zmianie rzeczywistych danych, a odebrana notatka delikatnie pojawia się w centrali. Zmiana zakładki nie opóźnia zapytań ani odpowiedzi. Ustawienie ograniczenia ruchu w systemie wyłącza dodatkowe animacje.
 
 Gotowy krótki opis:
 
@@ -102,6 +104,8 @@ Tryb programistyczny jest osobny: `npm run dev` uruchamia API na 3000 i Vite na 
 Nie musisz czekać na komunikat centrali o przerwie w kontakcie, aby pokazać lokalną kolejkę. Ten komunikat pojawia się po progu ciszy, domyślnie 30 sekund. Kolejka jest widoczna od razu po lokalnym zapisie.
 
 Warianty czasowe i dokładne kwestie: `docs/scenariusz-demo.md`.
+
+Film do zgłoszenia: [scenariusz nagrania, około 2 minut 30 sekund](scenariusz-filmu-demo.md). Zawiera pełny komentarz głosowy, kolejność działań i kontrolę gotowego pliku.
 
 ## 7. Gotowe wypowiedzi
 
