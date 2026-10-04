@@ -68,7 +68,7 @@ export function DemoStudio() {
         <div className="studio-start-hero">
           <SignalLandscape />
           <div className="studio-start-copy">
-            <p>Jeden wpis. Droga, którą warto zobaczyć.</p>
+            <p>Pokaz na działającej aplikacji.</p>
             <h1>Zobacz, co zostaje,<br /><span>gdy znika połączenie.</span></h1>
             <p className="studio-start-description">Obsługujesz telefon świadka i centralę na jednym ekranie. Zapisujesz obserwację, przerywasz transmisję i sprawdzasz, co dociera do ratownika.</p>
             <button className="brand-button" disabled={creating} onClick={() => void create()}>{creating ? <LoaderCircle className="spin" size={18} /> : <ArrowRight size={18} />} Rozpocznij pokaz</button>
@@ -77,7 +77,7 @@ export function DemoStudio() {
         </div>
         <div className="studio-start-sequence">
           <div><span>01</span><h2>Zapisz i potwierdź.</h2><p>Obserwacja trafia do centrali. Polecenie wraca na telefon.</p></div>
-          <div><span>02</span><h2>Przerwij połączenie.</h2><p>Kolejny wpis czeka lokalnie, aż przywrócisz transmisję.</p></div>
+          <div><span>02</span><h2>Wstrzymaj transmisję.</h2><p>Kolejny wpis czeka lokalnie, aż przywrócisz transmisję.</p></div>
           <div><span>03</span><h2>Zobacz całą historię.</h2><p>Wpis dociera do raportu. Wraz z czasem zapisu i odbioru.</p></div>
         </div>
         <p className="hint">Każda próba tworzy nowe fikcyjne zdarzenie. Poprzednia historia zostaje w panelu.</p>

@@ -1,4 +1,4 @@
-// Wstawia jedno fikcyjne zdarzenie ze scenariusza lekarza (docs/scenariusz-demo.md).
+// Wstawia jedno fikcyjne zdarzenie ze scenariusza lekarza (DO_PRZYJAZDU.md, sekcja 8).
 // Wszystkie dane fikcyjne, incidents.is_demo = 1.
 import { fileURLToPath } from 'node:url';
 import { DEMO_STAFF, ensureStaffAccounts } from '../auth/dispatcher.js';

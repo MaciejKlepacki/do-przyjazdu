@@ -26,7 +26,10 @@
 .demo-phone .w-embedded { display: flex; flex-direction: column; min-height: 0; height: 100%; padding-bottom: 0; }
 .demo-phone .w-header, .demo-phone .demo-banner { position: static; flex: none; }
 .demo-phone .w-main { flex: 1; overflow-y: auto; padding-bottom: 1.2rem; min-height: 0; }
-.demo-phone .w-alerts { flex: none; max-height: 150px; overflow: auto; padding: .6rem .8rem; }
+.demo-phone .w-alerts { flex: none; max-height: 240px; overflow: auto; padding: .6rem .8rem; }
+.demo-phone .w-alerts .callout { padding: .75rem .85rem; gap: .65rem; }
+.demo-phone .w-alerts .callout .small { font-size: .74rem; line-height: 1.45; }
+.demo-phone .w-alerts .callout .xsmall { display: none; }
 .demo-phone .w-header { padding: .65rem .8rem; }
 .demo-phone .w-main { padding: .9rem .8rem; }
 .demo-phone .demo-banner { font-size: .58rem; padding: .25rem .4rem; min-height: 24px; white-space: normal; }

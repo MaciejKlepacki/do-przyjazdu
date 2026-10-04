@@ -6,7 +6,7 @@ import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAge } from '../components/StalenessLabel';
 import { StaffShell } from '../components/StaffShell';
-import { CardHead, EmptyState, LiveDot, softSpring } from '../components/ui';
+import { CardHead, EmptyState, LiveDot, plural, softSpring } from '../components/ui';
 import { api, errorMessage } from '../lib/api';
 import { STATUS_LABEL } from '../lib/labels';
 import { usePolling } from '../lib/polling';
@@ -65,7 +65,7 @@ export function DispatcherHome() {
           <p className="muted">
             {isDispatcher
               ? open > 0
-                ? `Prowadzisz ${open} ${open === 1 ? 'otwarte zdarzenie' : 'otwarte zdarzenia'}.`
+                ? `Prowadzisz ${open} ${plural(open, 'otwarte zdarzenie', 'otwarte zdarzenia', 'otwartych zdarzeń')}.`
                 : 'Brak otwartych zdarzeń.'
               : 'Zdarzenia przydzielone Ci do przejęcia.'}
           </p>

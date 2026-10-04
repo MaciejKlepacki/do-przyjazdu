@@ -1,4 +1,6 @@
 import { spawnSync } from 'node:child_process';
+import { randomBytes } from 'node:crypto';
+import { existsSync } from 'node:fs';
 import { createServer } from 'node:net';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -14,6 +16,18 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 process.chdir(root);
 const { values } = parseArgs({ options: { port: { type: 'string', default: '5174' }, host: { type: 'string', default: '127.0.0.1' } } });
 const port = Number(values.port);
+const LOCAL_DEMO_PASSWORD = 'hackyeah';
+
+// Bez pliku .env lokalny pokaz startuje od razu z domyślnym hasłem. Tylko na adresie lokalnym.
+function applyLocalDefaults(): string | undefined {
+  const envFile = resolve(root, '.env');
+  if (existsSync(envFile)) process.loadEnvFile(envFile);
+  if (!['127.0.0.1', 'localhost', '::1'].includes(values.host!)) return undefined;
+  process.env.SESSION_SECRET ||= randomBytes(32).toString('hex');
+  if (process.env.DISPATCHER_PASSWORD) return undefined;
+  process.env.DISPATCHER_PASSWORD = LOCAL_DEMO_PASSWORD;
+  return LOCAL_DEMO_PASSWORD;
+}
 
 async function checkPort(): Promise<void> {
   const probe = createServer();
@@ -27,6 +41,7 @@ async function main() {
   if (!Number.isInteger(port) || port < 1 || port > 65535) throw new Error('Podaj poprawny port, np. npm run demo -- --port 5175');
   await checkPort();
   if (process.env.NODE_ENV !== 'test') process.env.NODE_ENV = 'development';
+  const defaultPassword = applyLocalDefaults();
   const config = loadConfig();
   config.DEMO_MODE = true;
   config.DATABASE_PATH = resolve(root, 'data/presentation.sqlite');
@@ -43,7 +58,9 @@ async function main() {
   if (!get(db, 'SELECT id FROM incidents WHERE id = $id', { id: 'ZD-DEMO' })) seedDemo(db, config);
   const server = createApp(db, config).listen(port, values.host, () => {
     console.log(`Demo: ${config.PUBLIC_BASE_URL}`);
-    console.log('Zaloguj się jako dyspozytor hasłem z DISPATCHER_PASSWORD. Każda próba tworzy osobne fikcyjne zdarzenie.');
+    console.log(defaultPassword
+      ? `Logowanie: konto "Dyspozytor (demo)", hasło: ${defaultPassword}. Własne hasło ustawisz w .env (DISPATCHER_PASSWORD).`
+      : 'Zaloguj się jako dyspozytor hasłem z DISPATCHER_PASSWORD. Każda próba tworzy osobne fikcyjne zdarzenie.');
     console.log('Ten serwer korzysta z osobnej bazy data/presentation.sqlite. SMS jest symulowany, podsumowanie AI jest wyłączone.');
     console.log('Telefon przez sieć lokalną wymaga hosta 0.0.0.0; pełna praca PWA wymaga HTTPS.');
   });
