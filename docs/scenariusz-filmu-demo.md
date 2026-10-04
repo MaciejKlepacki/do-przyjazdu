@@ -27,14 +27,14 @@ Przedziały obejmują komentarz i krótkie pauzy na odczytanie efektu. Jeśli kl
 
 | Czas | Obraz i działanie | Komentarz |
 |---|---|---|
-| 0:00-0:15 | Strona główna. Pokaż nazwę i hasło „Pomoc jest w drodze. Kontakt zostaje.” | „Pomoc została wezwana. Ratownicy są w drodze. W czasie oczekiwania pojawiają się polecenia, odpowiedzi i nowe informacje. Przy przekazaniu zdarzenia tę historię łatwo zgubić, szczególnie gdy znika zasięg.” |
+| 0:00-0:15 | Strona główna. Pokaż nazwę i hasło „Pomoc jest w drodze. Historia zostaje.” | „Pomoc została wezwana. Ratownicy są w drodze. W czasie oczekiwania pojawiają się polecenia, odpowiedzi i nowe informacje. Przy przekazaniu zdarzenia tę historię łatwo zgubić, szczególnie gdy znika zasięg.” |
 | 0:15-0:30 | Przejdź do przygotowanego `/demo`. Na ekranie telefon i centrala. | „Do przyjazdu porządkuje ten czas. Świadek, dyspozytor i ratownik korzystają z jednej historii zdarzenia. Zamiast odtwarzać wszystko z kolejnych rozmów, widzą, co zapisano, co wykonano i czego nadal nie wiadomo.” |
 | 0:30-0:50 | Telefon: „Obserwacje”. Przewiń do „Co macie przy sobie?” i wybierz „Nie wiem”, a przy „Jaka jest teraz pogoda?” wybierz „Mgła”. Wpisz pierwszą notatkę i kliknij „Zapisz obserwację”. Centrala: „Sytuacja”. Zaczekaj na odbiór i pokaż notatkę. | „Po lewej działa telefon świadka, po prawej centrala. Świadek podaje obserwację. Może też wybrać «Nie wiem». Po zapisaniu odpowiedź pojawia się u dyspozytora. Widzimy potwierdzenie odbioru, więc wiemy, że wpis dotarł.” |
 | 0:50-1:10 | Centrala: „Polecenia”, przy pierwszym poleceniu kliknij „Zatwierdź i wyślij v1”. Telefon: „Czynność”, zaczekaj na pobranie i wybierz „Wykonane”. Zaczekaj na „Otrzymano w centrali” i licznik wykonania 1/1, zanim wstrzymasz transmisję. | „Dyspozytor zatwierdza polecenie. Dopiero wtedy trafia ono do świadka. Świadek odpowiada «Wykonane», a centrala widzi rezultat. Potwierdzenie jest przypisane do konkretnej wersji polecenia, dzięki czemu późniejsza zmiana treści nie zmienia znaczenia wcześniejszej odpowiedzi.” |
 | 1:10-1:40 | Kliknij „Wstrzymaj transmisję”. Telefon: „Obserwacje”, wpisz drugą notatkę i zapisz. Centrala: „Sytuacja”. Pokaż lokalny wpis oczekujący i brak drugiej notatki w centrali. Zostaw ten stan na ekranie na kilka sekund. | „Teraz wstrzymujemy transmisję telefonu. Świadek nadal widzi pobrane instrukcje i zapisuje kolejną obserwację. Wpis zostaje na urządzeniu i czeka na wysłanie. Centrala jeszcze go nie ma. To rozróżnienie jest kluczowe: lokalny zapis nie oznacza, że dyspozytor już otrzymał informację.” |
 | 1:40-1:55 | Kliknij „Przywróć transmisję”. Zaczekaj na odbiór. Wskaż drugą notatkę i osobne czasy pod nią. | „Przywracamy transmisję. Kolejka zostaje wysłana, a nowa notatka pojawia się w centrali. Zachowujemy dwa czasy: zapis na telefonie i odbiór przez serwer. Historia pokazuje, kiedy informacja została zapisana, a kiedy dotarła dalej.” |
 | 1:55-2:15 | Centrala: „Przekazanie”. Pokaż odpowiedzi, wykonane polecenie, notatkę zapisaną podczas przerwy oraz liczbę pól bez znanej odpowiedzi. | „Na końcu ratownik ma raport: obserwacje, zatwierdzone polecenia, ich rezultaty i brakujące informacje. Jest w nim także wpis zapisany podczas przerwy. Kolejna osoba otrzymuje uporządkowaną historię, zamiast zaczynać od pytań o wszystko, co wydarzyło się wcześniej.” |
-| 2:15-2:30 | Krótka pauza na raporcie. Powrót na stronę główną i znak marki. | „Pokazaliśmy działający prototyp na fikcyjnym zdarzeniu. Nie wzywa pomocy i nie jest połączony ze służbami. Do przyjazdu. Pomoc jest w drodze. Kontakt zostaje.” |
+| 2:15-2:30 | Krótka pauza na raporcie. Powrót na stronę główną i znak marki. | „Pokazaliśmy działający prototyp na fikcyjnym zdarzeniu. Nie wzywa pomocy i nie jest połączony ze służbami. Do przyjazdu. Pomoc jest w drodze. Historia zostaje.” |
 
 ## Pełny tekst do nagrania głosu
 
@@ -52,7 +52,7 @@ Przywracamy transmisję. Kolejka zostaje wysłana, a nowa notatka pojawia się w
 
 Na końcu ratownik ma raport: obserwacje, zatwierdzone polecenia, ich rezultaty i brakujące informacje. Jest w nim także wpis zapisany podczas przerwy. Kolejna osoba otrzymuje uporządkowaną historię, zamiast zaczynać od pytań o wszystko, co wydarzyło się wcześniej.
 
-Pokazaliśmy działający prototyp na fikcyjnym zdarzeniu. Nie wzywa pomocy i nie jest połączony ze służbami. Do przyjazdu. Pomoc jest w drodze. Kontakt zostaje.
+Pokazaliśmy działający prototyp na fikcyjnym zdarzeniu. Nie wzywa pomocy i nie jest połączony ze służbami. Do przyjazdu. Pomoc jest w drodze. Historia zostaje.
 
 ## Co dokładnie udowadnia nagranie
 

@@ -22,7 +22,7 @@ Wstęp powinien trwać około 45-60 sekund. Resztę czasu przeznaczamy na najwa�
 
 Nazwa pozostaje „Do przyjazdu”. Jest zrozumiała po polsku i wskazuje konkretny moment użycia. Zmiana nazwy wymaga decyzji zespołu; na ten pokaz nie jest konieczna.
 
-Hasło: „Pomoc jest w drodze. Kontakt zostaje”. Kontakt oznacza ciągłość współpracy i zachowaną historię. Nie oznacza stałego połączenia z centralą bez internetu. Na stronie wyjaśniamy tę granicę.
+Hasło: „Pomoc jest w drodze. Historia zostaje”. Historia oznacza polecenia, odpowiedzi i obserwacje zapisane od wezwania pomocy do przyjazdu ratowników. Hasło nie obiecuje stałego połączenia z centralą bez internetu. Na stronie wyjaśniamy tę granicę.
 
 Znak to monogram „dp” z dwóch obróconych względem siebie fragmentów. Nawiązuje do nazwy i przekazania informacji między osobami. Atramentowy granat, jasne tło i przygaszony limonkowy akcent tworzą wspólną identyfikację strony, panelu i PWA. Kolory statusów nadal rozróżniają wynik czynności, ostrzeżenie i problem. Plik wektorowy: `apps/web/public/brand-symbol.svg`. Baner repozytorium: `docs/assets/readme-banner.svg` i jego eksport PNG.
 
