@@ -27,9 +27,8 @@ export function BrandHome() {
         <section className="brand-hero">
           <div className="brand-hero-copy">
             <p className="brand-context">Od wezwania pomocy do przejęcia na miejscu.</p>
-            <h1>Pomoc jest<br />w drodze.<br />
-              <span>Kontakt zostaje.</span>
-            </h1>
+            <h1><span className="brand-headline-line">Pomoc jest w drodze.</span>{' '}
+              <span className="brand-headline-line brand-headline-rest">Kontakt zostaje.</span></h1>
             <p className="brand-lead">Polecenia dyspozytora. Odpowiedzi świadka. Jedna historia, która dociera do ratownika.</p>
             <div className="brand-hero-actions">
               <Link to="/demo" className="btn btn-primary btn-lg">Zobacz działające demo <ArrowRight size={19} />
@@ -45,13 +44,13 @@ export function BrandHome() {
               <span>Trzy perspektywy.</span>
             </div>
             <svg viewBox="0 0 430 410" fill="none" aria-hidden>
-              <path d="M70 80h175a45 45 0 0 1 45 45v30a45 45 0 0 1-45 45H150a45 45 0 0 0-45 45v30a45 45 0 0 0 45 45h195" stroke="#cdd4c3" strokeWidth="2" />
-              <path d="M70 80h175a45 45 0 0 1 45 45v30a45 45 0 0 1-45 45H150a45 45 0 0 0-45 45v30a45 45 0 0 0 45 45h195" stroke="#224d3e" strokeWidth="5" strokeLinecap="round" />
-              <path d="M170 200h54" stroke="#f2f1e9" strokeWidth="9" />
-              <path d="M170 200h54" stroke="#dc6c38" strokeWidth="5" strokeDasharray="3 8" strokeLinecap="round" />
-              <circle cx="70" cy="80" r="11" fill="#dc6c38" stroke="#f2f1e9" strokeWidth="5" />
-              <circle cx="290" cy="140" r="11" fill="#224d3e" stroke="#f2f1e9" strokeWidth="5" />
-              <circle cx="345" cy="320" r="11" fill="#224d3e" stroke="#f2f1e9" strokeWidth="5" />
+              <path d="M40 80h350M40 200h350M40 320h350" className="figure-guides" />
+              <path className="figure-route" pathLength="1" d="M70 80h175a45 45 0 0 1 45 45v30a45 45 0 0 1-45 45H150a45 45 0 0 0-45 45v30a45 45 0 0 0 45 45h195" stroke="#f7f9fc" strokeWidth="6" strokeLinecap="round" />
+              <path d="M170 200h54" stroke="#18243a" strokeWidth="12" />
+              <path d="M170 200h54" stroke="#d5e8a1" strokeWidth="6" strokeDasharray="2 10" strokeLinecap="round" />
+              <circle className="figure-point figure-point-witness" cx="70" cy="80" r="11" fill="#d5e8a1" stroke="#18243a" strokeWidth="5" />
+              <circle className="figure-point figure-point-central" cx="290" cy="140" r="11" fill="#f7f9fc" stroke="#18243a" strokeWidth="5" />
+              <circle className="figure-point figure-point-responder" cx="345" cy="320" r="11" fill="#d5e8a1" stroke="#18243a" strokeWidth="5" />
               <text x="62" y="47" className="figure-label">Świadek</text>
               <text x="315" y="145" className="figure-label">Centrala</text>
               <text x="285" y="358" className="figure-label">Ratownik</text>

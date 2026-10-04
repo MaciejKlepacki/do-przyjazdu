@@ -1,4 +1,5 @@
 import type { HandoverReport, Incident, IncidentPanelResponse, TimelineEvent, WitnessLinkCreated } from '@do-przyjazdu/shared';
+import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, ArrowUpRight, Check, ClipboardList, Eye, LoaderCircle, Plus, Radio, Wifi, WifiOff } from 'lucide-react';
 import { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -75,6 +76,7 @@ export function DemoStudio() {
 }
 
 function LiveDemo({ session, onNew, creating }: { session: DemoSession; onNew: () => Promise<void>; creating: boolean }) {
+  const reducedMotion = useReducedMotion();
   const [paused, setPaused] = useState(false);
   const [pending, setPending] = useState(0);
   const [view, setView] = useState<View>('contact');
@@ -160,30 +162,30 @@ function LiveDemo({ session, onNew, creating }: { session: DemoSession; onNew: (
             {panel.error && <p className="callout callout-red" role="alert">{panel.error} Dane mogą być nieaktualne.</p>}
             <div className="demo-counters">
               <div>
-                <strong>{data?.observations.filter(o => o.author.kind === 'witness').length ?? 0}</strong>
+                <DemoCounter value={data?.observations.filter(o => o.author.kind === 'witness').length ?? 0} />
                 <span>Obserwacje</span>
               </div>
               <div>
-                <strong>{data?.instructionOutcomes.filter(o => o.state === 'done').length ?? 0}/{data?.instructionOutcomes.length ?? 0}</strong>
+                <DemoCounter value={`${data?.instructionOutcomes.filter(o => o.state === 'done').length ?? 0}/${data?.instructionOutcomes.length ?? 0}`} />
                 <span>Wykonane czynności</span>
               </div>
               <div>
-                <strong>{data?.situationReports.filter(r => !r.reviewedAt).length ?? 0}</strong>
+                <DemoCounter value={data?.situationReports.filter(r => !r.reviewedAt).length ?? 0} />
                 <span>Do przeglądu</span>
               </div>
             </div>
             <div className="demo-view-tabs" role="tablist" aria-label="Widoki centrali">{views.map(v =>
               <button key={v.id} role="tab" aria-selected={view === v.id} aria-controls="demo-central-content" onClick={() => setView(v.id)}>{v.label}</button>)}</div>
             <div className="demo-central-content" id="demo-central-content" role="tabpanel" aria-label={views.find(v => v.id === view)?.label}>
-              {!data ? <p className="hint">Pobieranie danych…</p> : <>
+              {!data ? <p className="hint">Pobieranie danych…</p> : <motion.div key={view} initial={reducedMotion ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .24, ease: [.2, .8, .2, 1] }}>
                 {view === 'contact' && <>
                   <h3>
                     <Eye size={17} /> Ostatnie odpowiedzi świadka</h3>
                   <FieldStateList fields={data.fields} fieldStates={data.fieldStates} timeMode="both" />{data.observations.filter(o => o.freeText).slice(-3).map(o =>
-                    <div className="demo-note" key={o.entryId}>
+                    <motion.div className="demo-note" key={o.entryId} initial={reducedMotion ? false : { opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: .32, ease: [.2, .8, .2, 1] }}>
                       <span className="quote">{o.freeText}</span>
                       <small>zapisano {formatTime(o.times.deviceTime)} · odebrano {formatTime(o.times.receivedTime)}</small>
-                    </div>)}<h3>Zmiany wymagające przeglądu</h3>
+                    </motion.div>)}<h3>Zmiany wymagające przeglądu</h3>
                   <ReviewQueue reports={data.situationReports} sms={data.sms} canManage onChange={refresh} />
                 </>}
                 {view === 'instructions' && <>
@@ -199,7 +201,7 @@ function LiveDemo({ session, onNew, creating }: { session: DemoSession; onNew: (
                   </Link>
                   <p className="hint">Przejęcie potwierdza przydzielony ratownik na swoim koncie.</p>
                 </>}
-              </>}
+              </motion.div>}
             </div>
           </div>
         </section>
@@ -212,7 +214,13 @@ function LiveDemo({ session, onNew, creating }: { session: DemoSession; onNew: (
   );
 }
 
+function DemoCounter({ value }: { value: string | number }) {
+  const reducedMotion = useReducedMotion();
+  return <motion.strong key={value} initial={reducedMotion ? false : { opacity: .4, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .25 }}>{value}</motion.strong>;
+}
+
 function DemoReport({ report }: { report: HandoverReport }) {
+  const reducedMotion = useReducedMotion();
   return <div className="demo-report">
     <p className="hint">Raport z {formatTime(report.generatedAt)}. Zbudowany z wpisów, dostępny bez modelu AI.</p>
     <FieldStateList fields={report.fields} fieldStates={report.fieldStates} timeMode="both" />
@@ -222,8 +230,8 @@ function DemoReport({ report }: { report: HandoverReport }) {
         <strong>{OUTCOME_LABEL[report.instructionOutcomes.find(o => o.instructionId === i.id)?.state ?? 'awaiting']}</strong>
       </div>)}<h3>Co nadal wymaga uwagi</h3>
     <p>{report.missingInformation.length} pól bez znanej odpowiedzi · {report.unresolvedDifficulties.length} trudności · {report.openSituationReports.length} zgłoszeń bez przeglądu · {report.contactGaps.length} przerw w kontakcie</p>{report.latestObservations.filter(o => o.freeText).map(o =>
-      <div className="demo-note" key={o.entryId}>
+      <motion.div className="demo-note" key={o.entryId} initial={reducedMotion ? false : { opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: .32 }}>
         <span className="quote">{o.freeText}</span>
         <small>telefon {formatTime(o.times.deviceTime)} · centrala {formatTime(o.times.receivedTime)}</small>
-      </div>)}</div>;
+      </motion.div>)}</div>;
 }

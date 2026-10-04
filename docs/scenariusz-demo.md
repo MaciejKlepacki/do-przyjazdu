@@ -2,6 +2,8 @@
 
 Pokaz na fikcyjnym zdarzeniu. Treść medyczną w `apps/api/src/scenario/demoScenario.ts` zatwierdza lekarz z zespołu. Ten dokument opisuje obsługę pokazu, nie jest źródłem poleceń medycznych.
 
+Film do zgłoszenia ma osobny [scenariusz z czasami, działaniami na ekranie i pełnym komentarzem głosowym](scenariusz-filmu-demo.md), roboczo na około 2 minuty 30 sekund.
+
 ## Przygotowanie
 
 1. Ustaw własne `DISPATCHER_PASSWORD` i `SESSION_SECRET` w `.env`.

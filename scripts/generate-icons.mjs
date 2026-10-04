@@ -34,13 +34,6 @@ function png(size, pixel) {
   return Buffer.concat([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), chunk('IHDR', ihdr), chunk('IDAT', deflateSync(raw)), chunk('IEND', Buffer.alloc(0))]);
 }
 
-const points = [[16,40],[25,40]];
-for (let n=1;n<=40;n++) {
-  const t=n/40, a=1-t;
-  points.push([a*a*a*25+3*a*a*t*35+3*a*t*t*29+t*t*t*40, a*a*a*40+3*a*a*t*40+3*a*t*t*24+t*t*t*24]);
-}
-points.push([48,24]);
-
 function segmentDistance(x,y,a,b) {
   const dx=b[0]-a[0], dy=b[1]-a[1];
   const t=Math.max(0,Math.min(1,((x-a[0])*dx+(y-a[1])*dy)/(dx*dx+dy*dy)));
@@ -54,9 +47,11 @@ function icon(size,scale) {
     for(let sy=0;sy<samples;sy++)for(let sx=0;sx<samples;sx++) {
       const x=((u+(sx+.5)/(samples*size)-.5)/scale+.5)*64;
       const y=((v+(sy+.5)/(samples*size)-.5)/scale+.5)*64;
-      const orange=Math.hypot(x-16,y-40)<=5;
-      const cream=Math.hypot(x-48,y-24)<=5 || points.some((p,n)=>n>0 && segmentDistance(x,y,points[n-1],p)<=2.5);
-      const sample=orange?[237,135,86]:cream?[255,254,248]:[25,46,40];
+      const cream=(Math.abs(Math.hypot(x-18,y-39)-10)<=3 && !(x>18 && y<39))
+        || segmentDistance(x,y,[28,14],[28,39])<=3 || segmentDistance(x,y,[18,29],[28,29])<=3;
+      const lime=(Math.abs(Math.hypot(x-46,y-25)-10)<=3 && !(x<46 && y>25))
+        || segmentDistance(x,y,[36,50],[36,25])<=3 || segmentDistance(x,y,[46,35],[36,35])<=3;
+      const sample=lime?[213,232,161]:cream?[247,249,252]:[24,36,58];
       for(let k=0;k<3;k++)color[k]+=sample[k]/(samples*samples);
     }
     return [...color.map(Math.round),255];
