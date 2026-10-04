@@ -1,6 +1,6 @@
 import type { HandoverReport, Incident, IncidentPanelResponse, TimelineEvent, WitnessLinkCreated } from '@do-przyjazdu/shared';
 import { motion, useReducedMotion } from 'framer-motion';
-import { ArrowRight, ArrowUpRight, Check, ClipboardList, Eye, LoaderCircle, Plus, Radio, Wifi, WifiOff } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Check, ClipboardList, Eye, LoaderCircle, Plus, Radio, Smartphone, Wifi, WifiOff } from 'lucide-react';
 import { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Logo, plural, Splash } from '../components/ui';
@@ -14,6 +14,8 @@ import { OUTCOME_LABEL } from '../lib/labels';
 import { useNow, usePolling } from '../lib/polling';
 import { formatTime } from '../lib/time';
 import { WitnessApp } from '../witness/WitnessApp';
+import { SignalLandscape } from '../brand/SignalLandscape';
+import './demo.css';
 
 interface DemoSession { incidentId: string; token: string; startedAt: number }
 type View = 'contact' | 'instructions' | 'timeline' | 'handover';
@@ -63,11 +65,21 @@ export function DemoStudio() {
         </Link>
       </header>
       {!session ? <main className="studio-start">
-        <span className="studio-start-line" aria-hidden />
-        <p>Jedno zdarzenie. Cały przepływ.</p>
-        <h1>Od pierwszej odpowiedzi<br />do przekazania ratownikowi.</h1>
-        <p className="studio-start-description">Uruchom osobną sesję pokazu. Po lewej obsługujesz telefon świadka. Po prawej zatwierdzasz polecenia i obserwujesz, co dotarło do centrali.</p>
-        <button className="btn btn-primary btn-lg" disabled={creating} onClick={() => void create()}>{creating ? <LoaderCircle className="spin" size={18} /> : <ArrowRight size={18} />} Rozpocznij pokaz</button>
+        <div className="studio-start-hero">
+          <SignalLandscape />
+          <div className="studio-start-copy">
+            <p>Jeden wpis. Droga, którą warto zobaczyć.</p>
+            <h1>Zobacz, co zostaje,<br /><span>gdy znika połączenie.</span></h1>
+            <p className="studio-start-description">Obsługujesz telefon świadka i centralę na jednym ekranie. Zapisujesz obserwację, przerywasz transmisję i sprawdzasz, co dociera do ratownika.</p>
+            <button className="brand-button" disabled={creating} onClick={() => void create()}>{creating ? <LoaderCircle className="spin" size={18} /> : <ArrowRight size={18} />} Rozpocznij pokaz</button>
+            <p className="studio-start-note">Działająca aplikacja · Fikcyjne zdarzenie · Około 3 minut</p>
+          </div>
+        </div>
+        <div className="studio-start-sequence">
+          <div><span>01</span><h2>Zapisz i potwierdź.</h2><p>Obserwacja trafia do centrali. Polecenie wraca na telefon.</p></div>
+          <div><span>02</span><h2>Przerwij połączenie.</h2><p>Kolejny wpis czeka lokalnie, aż przywrócisz transmisję.</p></div>
+          <div><span>03</span><h2>Zobacz całą historię.</h2><p>Wpis dociera do raportu. Wraz z czasem zapisu i odbioru.</p></div>
+        </div>
         <p className="hint">Każda próba tworzy nowe fikcyjne zdarzenie. Poprzednia historia zostaje w panelu.</p>
       </main> : <LiveDemo key={session.incidentId} session={session} onNew={create} creating={creating} />}
       {error && <p className="studio-error error-text" role="alert">{error}</p>}
@@ -82,6 +94,7 @@ function LiveDemo({ session, onNew, creating }: { session: DemoSession; onNew: (
   const [view, setView] = useState<View>('contact');
   const [offlineIds, setOfflineIds] = useState<string[]>([]);
   const [resynced, setResynced] = useState(false);
+  const [reportRead, setReportRead] = useState(false);
   const [copyError, setCopyError] = useState(false);
   const now = useNow(1000);
   const panel = usePolling(() => api<IncidentPanelResponse>(`/incidents/${session.incidentId}`), 2000, [session.incidentId]);
@@ -100,7 +113,7 @@ function LiveDemo({ session, onNew, creating }: { session: DemoSession; onNew: (
     { label: 'Polecenie', done: Boolean(data?.instructions.some(i => i.status === 'approved')) },
     { label: 'Odpowiedź', done: Boolean(data?.acknowledgements.length) },
     { label: 'Powrót łączności', done: resynced },
-    { label: 'Odczyt raportu', done: view === 'handover' },
+    { label: 'Odczyt raportu', done: reportRead && Boolean(report.data) && !report.error },
   ];
   const nextStep = steps.findIndex(s => !s.done);
   const guide = [
@@ -116,8 +129,8 @@ function LiveDemo({ session, onNew, creating }: { session: DemoSession; onNew: (
     <main className="studio-live">
       <div className="studio-title">
         <div>
-          <p>Jedno zdarzenie, dwa działające widoki</p>
-          <h1>Historia nie urywa się z zasięgiem.</h1>
+          <p>Fikcyjne zdarzenie na szlaku · Telefon świadka + centrala</p>
+          <h1>Jedna historia. Krok po kroku.</h1>
         </div>
         <div className="studio-timer">
           <span>Próba pokazu</span>
@@ -125,13 +138,18 @@ function LiveDemo({ session, onNew, creating }: { session: DemoSession; onNew: (
         </div>
       </div>
       <ol className="studio-steps">{steps.map((step, n) =>
-        <li key={step.label} className={step.done ? 'is-done' : n === nextStep ? 'is-current' : ''}>
+        <li key={step.label} aria-current={n === nextStep ? 'step' : undefined} className={step.done ? 'is-done' : n === nextStep ? 'is-current' : ''}>
           <span>{step.done ? <Check size={14} /> : String(n + 1).padStart(2, '0')}</span>{step.label}</li>)}</ol>
-      <p className="studio-guide">{guide}</p>
+      <p className="studio-guide"><ArrowRight size={15} /><span>{guide}</span></p>
+      <div className={`demo-signal-strip ${panel.error ? 'signal-error' : paused ? 'signal-waiting' : resynced && pending === 0 ? 'signal-received' : ''}`} role="status" aria-live="polite">
+        <div className="signal-source"><Smartphone size={21} strokeWidth={1.5} /><div><span>Telefon świadka</span><strong>{pending ? `${pending} ${plural(pending, 'wpis czeka', 'wpisy czekają', 'wpisów czeka')}` : 'Brak oczekujących wpisów'}</strong></div></div>
+        <div className="signal-bridge"><i aria-hidden="true" /><span>{panel.error ? <WifiOff size={17} /> : paused ? <WifiOff size={17} /> : pending ? <LoaderCircle size={17} className="spin" /> : resynced ? <Check size={17} /> : <Wifi size={17} />}{panel.error ? 'Brak odświeżenia danych' : paused ? 'Transmisja wstrzymana' : pending ? 'Wpisy czekają na odbiór' : resynced ? 'Odbiór potwierdzony' : 'Transmisja włączona'}</span><i aria-hidden="true" /></div>
+        <div className="signal-target"><Radio size={21} strokeWidth={1.5} /><div><span>Centrala</span><strong>{panel.error ? 'Dane mogą być nieaktualne' : `${data?.observations.filter(o => o.author.kind === 'witness').length ?? 0} ${plural(data?.observations.filter(o => o.author.kind === 'witness').length ?? 0, 'obserwacja', 'obserwacje', 'obserwacji')}`}</strong></div></div>
+      </div>
       <div className="demo-workspace">
         <section className="demo-witness" aria-label="Telefon świadka">
           <div className="demo-pane-title">
-            <h2>Na miejscu</h2>
+            <h2><span className="demo-role-number">01</span> Na miejscu</h2>
             <span>Telefon świadka</span>
           </div>
           <div className="demo-phone">
@@ -149,7 +167,7 @@ function LiveDemo({ session, onNew, creating }: { session: DemoSession; onNew: (
         </section>
         <section className="demo-central" aria-label="Panel centrali">
           <div className="demo-pane-title">
-            <h2>W centrali</h2>
+            <h2><span className="demo-role-number">02</span> W centrali</h2>
             <Link to={`/dispatcher/${session.incidentId}`}>{session.incidentId} <ArrowUpRight size={14} />
             </Link>
           </div>
@@ -175,17 +193,20 @@ function LiveDemo({ session, onNew, creating }: { session: DemoSession; onNew: (
               </div>
             </div>
             <div className="demo-view-tabs" role="tablist" aria-label="Widoki centrali">{views.map(v =>
-              <button key={v.id} role="tab" aria-selected={view === v.id} aria-controls="demo-central-content" onClick={() => setView(v.id)}>{v.label}</button>)}</div>
-            <div className="demo-central-content" id="demo-central-content" role="tabpanel" aria-label={views.find(v => v.id === view)?.label}>
+              <button key={v.id} role="tab" id={`demo-tab-${v.id}`} aria-selected={view === v.id} aria-controls="demo-central-content" onClick={() => { setView(v.id); if (v.id === 'handover') setReportRead(true); }}>{v.label}</button>)}</div>
+            <div className="demo-central-content" id="demo-central-content" role="tabpanel" aria-labelledby={`demo-tab-${view}`} tabIndex={0}>
               {!data ? <p className="hint">Pobieranie danych…</p> : <motion.div key={view} initial={reducedMotion ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .24, ease: [.2, .8, .2, 1] }}>
                 {view === 'contact' && <>
-                  <h3>
-                    <Eye size={17} /> Ostatnie odpowiedzi świadka</h3>
-                  <FieldStateList fields={data.fields} fieldStates={data.fieldStates} timeMode="both" />{data.observations.filter(o => o.freeText).slice(-3).map(o =>
+                  <h3><Eye size={17} /> Ostatnie wpisy</h3>
+                  {!data.observations.some(o => o.freeText) && <div className="demo-note-empty"><span>Historia zaczyna się na telefonie.</span><p>Zapisz pierwszą obserwację po lewej. Tutaj zobaczysz ją po odbiorze.</p></div>}
+                  {data.observations.filter(o => o.freeText).slice(-3).reverse().map(o =>
                     <motion.div className="demo-note" key={o.entryId} initial={reducedMotion ? false : { opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: .32, ease: [.2, .8, .2, 1] }}>
                       <span className="quote">{o.freeText}</span>
                       <small>zapisano {formatTime(o.times.deviceTime)} · odebrano {formatTime(o.times.receivedTime)}</small>
-                    </motion.div>)}<h3>Zmiany wymagające przeglądu</h3>
+                    </motion.div>)}
+                  <h3>Ostatnie odpowiedzi świadka</h3>
+                  <FieldStateList fields={data.fields} fieldStates={data.fieldStates} timeMode="both" />
+                  <h3>Zmiany wymagające przeglądu</h3>
                   <ReviewQueue reports={data.situationReports} sms={data.sms} canManage onChange={refresh} />
                 </>}
                 {view === 'instructions' && <>
@@ -222,7 +243,7 @@ function DemoCounter({ value }: { value: string | number }) {
 function DemoReport({ report }: { report: HandoverReport }) {
   const reducedMotion = useReducedMotion();
   return <div className="demo-report">
-    <p className="hint">Raport z {formatTime(report.generatedAt)}. Zbudowany z wpisów, dostępny bez modelu AI.</p>
+    <div className="demo-report-summary"><span>Historia gotowa do odczytu</span><strong>Co się wydarzyło.<br />Co wykonano. Czego nie wiemy.</strong><p>Raport z {formatTime(report.generatedAt)} · Na podstawie otrzymanych wpisów.</p></div>
     <FieldStateList fields={report.fields} fieldStates={report.fieldStates} timeMode="both" />
     <h3>Polecenia i rezultaty</h3>{report.approvedInstructions.length === 0 && <p className="hint">Brak zatwierdzonych poleceń.</p>}{report.approvedInstructions.map(i =>
       <div key={i.id} className="demo-report-instruction">

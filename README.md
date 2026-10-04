@@ -1,4 +1,4 @@
-![Do przyjazdu. Pomoc jest w drodze. Kontakt zostaje.](docs/assets/readme-banner.png)
+![Do przyjazdu. Pomoc jest w drodze. Historia zostaje.](docs/assets/readme-banner.png)
 
 # Do przyjazdu
 
@@ -44,6 +44,7 @@ Checks: `npm run typecheck`, `npm test`, `npm run build`. No lint command is con
 
 Presentation materials:
 
+- [Hackathon submission: texts, cover, deck and recording script](docs/zgloszenie/ZGLOSZENIE.md).
 - [Live demo walkthrough](docs/scenariusz-demo.md).
 - [Narrated demo video script, about 2:30](docs/scenariusz-filmu-demo.md).
 - [Full project guide](docs/przewodnik-projektu.md).

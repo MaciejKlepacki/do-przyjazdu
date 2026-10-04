@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="384" viewBox="0 0 1280 384" role="img" aria-labelledby="title description">
   <title id="title">Do przyjazdu</title>
-  <desc id="description">Pomoc jest w drodze. Kontakt zostaje. Znak dp na granatowym tle z jasnym i limonkowym akcentem.</desc>
+  <desc id="description">Pomoc jest w drodze. Historia zostaje. Znak dp na granatowym tle z jasnym i limonkowym akcentem.</desc>
   <rect width="1280" height="384" rx="18" fill="#18243a"/>
   <g transform="translate(64 50) scale(1.15)" fill="none" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
     <path d="M28 14v25a10 10 0 1 1-10-10h10" stroke="#f7f9fc"/>
@@ -9,7 +9,7 @@
   <g font-family="Inter, Arial, sans-serif">
     <text x="158" y="103" fill="#f7f9fc" font-size="47" font-weight="700" letter-spacing="-2">Do przyjazdu<tspan fill="#d5e8a1">.</tspan></text>
     <text x="64" y="197" fill="#f7f9fc" font-size="36" font-weight="600" letter-spacing="-1">Pomoc jest w drodze.</text>
-    <text x="64" y="242" fill="#d5e8a1" font-size="36" font-weight="600" letter-spacing="-1">Kontakt zostaje.</text>
+    <text x="64" y="242" fill="#d5e8a1" font-size="36" font-weight="600" letter-spacing="-1">Historia zostaje.</text>
     <text x="64" y="325" fill="#bbc7d9" font-size="18">Świadek</text>
     <text x="202" y="325" fill="#bbc7d9" font-size="18">Dyspozytor</text>
     <text x="370" y="325" fill="#bbc7d9" font-size="18">Ratownik</text>
