@@ -4,7 +4,7 @@ import type { AiSummaryDraft } from '@do-przyjazdu/shared';
 import { motion } from 'framer-motion';
 import { Check, Link2, LoaderCircle, RefreshCw, Sparkles } from 'lucide-react';
 import { useState } from 'react';
-import { softSpring } from '../components/ui';
+import { plural, softSpring } from '../components/ui';
 import { api, errorMessage } from '../lib/api';
 import { formatTime } from '../lib/time';
 
@@ -57,7 +57,7 @@ export function AiDraftPanel({ incidentId, draft, available, canApprove, onChang
                 <span>
                   {s.text}{' '}
                   <button className="cite" onClick={() => onCite(s.entryIds)} title="Pokaż wpisy na osi czasu">
-                    <Link2 size={11} /> {s.entryIds.length} wpis{s.entryIds.length === 1 ? '' : 'y'}
+                    <Link2 size={11} /> {s.entryIds.length} {plural(s.entryIds.length, 'wpis', 'wpisy', 'wpisów')}
                   </button>
                 </span>
               </motion.li>

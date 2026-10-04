@@ -1,7 +1,7 @@
 // Scenariusz demonstracyjny: pola formularza i instrukcje.
 //
 // UWAGA: treść ROBOCZA przygotowana przez zespół techniczny jako wypełniacz, żeby przepływ dało się
-// przejść od początku do końca. Właścicielem treści jest lekarz w zespole (docs/scenariusz-demo.md).
+// przejść od początku do końca. Właścicielem treści jest lekarz w zespole (DO_PRZYJAZDU.md, sekcja 8).
 // Przed pokazem treść musi zostać przejrzana i zastąpiona albo zatwierdzona przez lekarza.
 // Dane są fikcyjne. To nie jest procedura TOPR.
 import type { ObservationField } from '@do-przyjazdu/shared';
